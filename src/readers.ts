@@ -516,3 +516,285 @@ export function getProjectVersion(root: string): string {
 export function getChangelog(root: string): string | null {
   return readFileSafe(root, "CHANGELOG.md") || readFileSafe(root, "CHANGELOG") || readFileSafe(root, "changelog.md");
 }
+
+// --- 16. Physics ---
+export function getPhysicsSettings(root: string): { dynamics?: Record<string, string>; physics2d?: Record<string, string> } {
+  const dynamicsContent = readFileSafe(root, PROJECT_SETTINGS, "DynamicsManager.asset");
+  const physics2dContent = readFileSafe(root, PROJECT_SETTINGS, "Physics2DSettings.asset");
+  const out: { dynamics?: Record<string, string>; physics2d?: Record<string, string> } = {};
+  if (dynamicsContent) out.dynamics = parseUnityKeyValue(dynamicsContent);
+  if (physics2dContent) out.physics2d = parseUnityKeyValue(physics2dContent);
+  return out;
+}
+
+// --- 17. Render pipelines (URP/HDRP) ---
+export function listRenderPipelines(root: string): { pipelines: string[]; volumeProfiles: string[] } {
+  const pipelines = listFilesRecursive(root, ASSETS, { ext: ".asset" }).filter((p) => p.toLowerCase().includes("pipeline") || p.toLowerCase().includes("render"));
+  const settings = join(ASSETS, "Settings");
+  const vol = listFilesRecursive(root, settings, { ext: ".asset" }).filter((p) => p.toLowerCase().includes("volume") || p.toLowerCase().includes("profile"));
+  return { pipelines: pipelines.slice(0, 50), volumeProfiles: vol.slice(0, 30) };
+}
+
+// --- 18. Timeline ---
+export function listTimelinePlayables(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".playable" });
+}
+
+// --- 19. Sprites / 2D ---
+export function listSpriteAtlases(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".spriteatlas" });
+}
+
+export function listTilemapAssets(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".asset" }).filter((p) => p.toLowerCase().includes("tilemap") || p.toLowerCase().includes("tile"));
+}
+
+// --- 20. Shader Graph / VFX ---
+export function listShaderGraphs(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".shadergraph" });
+}
+
+export function listVfxGraphs(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".vfx" });
+}
+
+// --- 21. TextMeshPro ---
+export function listTmpFonts(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".asset" }).filter((p) => p.toLowerCase().includes("tmp") || p.toLowerCase().includes("font"));
+}
+
+export function getTmpSettingsPath(root: string): string | null {
+  const paths = ["Assets/Resources/TMP Settings.asset", "Assets/TextMesh Pro/Resources/TMP Settings.asset"];
+  for (const p of paths) if (existsSync(join(root, p))) return p;
+  return null;
+}
+
+// --- 22. UI Toolkit ---
+export function listUiDocuments(root: string): { uxml: string[]; uss: string[] } {
+  const uxml = listFilesRecursive(root, ASSETS, { ext: ".uxml" });
+  const uss = listFilesRecursive(root, ASSETS, { ext: ".uss" });
+  return { uxml, uss };
+}
+
+// --- 23. New Input System (.inputactions) ---
+export function listInputActionAssets(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".inputactions" });
+}
+
+export function getInputActionsSummary(root: string, path: string): { maps: string[]; actions: string[] } {
+  const j = readJsonSafe<{ maps?: Array<{ name: string }>; actions?: Array<{ name: string }> }>(root, path);
+  if (!j) return { maps: [], actions: [] };
+  return {
+    maps: (j.maps || []).map((m) => m.name),
+    actions: (j.actions || []).map((a) => a.name),
+  };
+}
+
+// --- 24. Presets ---
+export function listPresets(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".preset" });
+}
+
+// --- 25. Editor scripts ---
+export function listEditorScripts(root: string): string[] {
+  const all = listScripts(root);
+  return all.filter((p) => p.includes("Editor") || p.toLowerCase().includes("/editor/"));
+}
+
+// --- 26. Prefab → script refs ---
+export function getPrefabScriptGuids(root: string, prefabPath: string): string[] {
+  const content = readFileSafe(root, prefabPath);
+  if (!content) return [];
+  const guids: string[] = [];
+  const re = /guid:\s*([a-f0-9]{32})/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(content)) !== null) guids.push(m[1]);
+  const scriptRef = /MonoBehaviour:\s*\n[\s\S]*?m_Script:\s*\{\s*fileID:\s*\d+,\s*guid:\s*([a-f0-9]{32})/g;
+  while ((m = scriptRef.exec(content)) !== null) guids.push(m[1]);
+  return [...new Set(guids)];
+}
+
+// --- 27. Assembly dependency graph ---
+export function getAssemblyDependencyGraph(root: string): { nodes: string[]; edges: [string, string][] } {
+  const asms = getAssemblyDefinitions(root);
+  const nodes = asms.map((a) => a.name);
+  const edges: [string, string][] = [];
+  for (const a of asms) for (const ref of a.references) edges.push([a.name, ref]);
+  return { nodes, edges };
+}
+
+// --- 28. CI configs ---
+export function listCiConfigs(root: string): string[] {
+  const out: string[] = [];
+  const gh = join(root, ".github", "workflows");
+  if (existsSync(gh)) readdirSync(gh).filter((e) => e.endsWith(".yml") || e.endsWith(".yaml")).forEach((e) => out.push(`.github/workflows/${e}`));
+  if (existsSync(join(root, "Jenkinsfile"))) out.push("Jenkinsfile");
+  if (existsSync(join(root, "unity-cloud-build.json"))) out.push("unity-cloud-build.json");
+  return out;
+}
+
+// --- 29. Large assets ---
+export function listLargeAssets(root: string, minSizeMb: number = 5): { path: string; sizeMb: number }[] {
+  const out: { path: string; sizeMb: number }[] = [];
+  const threshold = minSizeMb * 1024 * 1024;
+  const stack: string[] = [ASSETS];
+  while (stack.length) {
+    const d = stack.pop()!;
+    const fullD = join(root, d);
+    try {
+      for (const e of readdirSync(fullD)) {
+        const rel = join(d, e);
+        const fullPath = join(root, rel);
+        if (statSync(fullPath).isDirectory()) {
+          if (!e.startsWith(".")) stack.push(rel);
+        } else {
+          const size = statSync(fullPath).size;
+          if (size >= threshold) out.push({ path: rel, sizeMb: Math.round((size / 1024 / 1024) * 100) / 100 });
+        }
+      }
+    } catch {
+      /* */
+    }
+  }
+  return out.sort((a, b) => b.sizeMb - a.sizeMb);
+}
+
+// --- 30. PlayFab ---
+export function getPlayFabConfig(root: string): { titleId?: string; configPaths: string[] } {
+  const configPaths: string[] = [];
+  const candidates = listFilesRecursive(root, ASSETS, { ext: ".asset" }).filter((p) => p.toLowerCase().includes("playfab"));
+  const res = listFilesRecursive(root, join(ASSETS, "Resources"), { ext: ".json" });
+  candidates.forEach((p) => configPaths.push(p));
+  res.filter((p) => p.toLowerCase().includes("playfab")).forEach((p) => configPaths.push(p));
+  let titleId: string | undefined;
+  for (const p of configPaths) {
+    const content = readFileSafe(root, p);
+    const m = content?.match(/titleId|TitleId|title_id["\s:]+([a-f0-9]{5,})/i);
+    if (m?.[1]) titleId = m[1];
+  }
+  return { titleId, configPaths };
+}
+
+// --- 31. Figma-related assets ---
+export function listFigmaRelatedAssets(root: string): string[] {
+  const figmaDir = join(ASSETS, "Figma");
+  if (existsSync(join(root, figmaDir))) return listFilesRecursive(root, figmaDir);
+  return listFilesRecursive(root, ASSETS).filter((p) => p.toLowerCase().includes("figma"));
+}
+
+// --- 32. Firebase ---
+export function getFirebaseConfig(root: string): { googleServicesJson?: string; plist?: string; projectId?: string } {
+  const plist = "GoogleService-Info.plist";
+  const json = "google-services.json";
+  const paths = [join(ASSETS, json), join(ASSETS, plist), json, plist];
+  let content: string | null = null;
+  let found: string | undefined;
+  for (const p of paths) {
+    content = readFileSafe(root, p);
+    if (content) { found = p; break; }
+  }
+  if (!content) return {};
+  const projectId = content.match(/project_id["\s:]+["']?([^"'\s]+)/i)?.[1];
+  return { googleServicesJson: found?.includes(".json") ? found : undefined, plist: found?.includes(".plist") ? found : undefined, projectId };
+}
+
+// --- 33. Steam ---
+export function getSteamConfig(root: string): { steamAppIdTxt?: string; steamworksPath?: string } {
+  const appId = readFileSafe(root, "steam_appid.txt");
+  let steamworksPath: string | undefined;
+  const plug = join(ASSETS, "Plugins");
+  if (existsSync(join(root, plug))) {
+    const entries = readdirSync(join(root, plug));
+    if (entries.some((e) => e.toLowerCase().includes("steam"))) steamworksPath = join(plug, entries.find((e) => e.toLowerCase().includes("steam"))!);
+  }
+  return { steamAppIdTxt: appId ? "steam_appid.txt" : undefined, steamworksPath };
+}
+
+// --- 34. Discord ---
+export function getDiscordConfig(root: string): { sdkPath?: string } {
+  const plug = join(ASSETS, "Plugins");
+  const full = join(root, plug);
+  if (!existsSync(full)) return {};
+  const entries = readdirSync(full);
+  const discord = entries.find((e) => e.toLowerCase().includes("discord"));
+  return discord ? { sdkPath: join(plug, discord) } : {};
+}
+
+// --- 35. FMOD ---
+export function getFmodConfig(root: string): { banksPath?: string; projectPath?: string; bankFiles: string[] } {
+  const bankFiles = listFilesRecursive(root, ASSETS, { ext: ".bank" });
+  const meta = listFilesRecursive(root, ASSETS, { ext: ".meta" }).filter((p) => p.includes("FMOD") || p.includes("fmod"));
+  let banksPath: string | undefined;
+  let projectPath: string | undefined;
+  for (const m of meta) {
+    const content = readFileSafe(root, m);
+    if (content?.includes("bank")) banksPath = m.replace(/\.meta$/, "").replace(/[^/]+$/, "");
+    if (content?.includes("project")) projectPath = m.replace(/\.meta$/, "");
+  }
+  return { banksPath, projectPath, bankFiles };
+}
+
+// --- 36. Wwise ---
+export function getWwiseConfig(root: string): { soundBanksPath?: string; projectPaths: string[] } {
+  const wproj = listFilesRecursive(root, ASSETS).filter((p) => p.endsWith(".wproj") || p.endsWith(".wwise"));
+  const banks = listFilesRecursive(root, ASSETS).filter((p) => p.toLowerCase().includes("soundbank") || p.toLowerCase().includes("audiobank"));
+  return { soundBanksPath: banks[0]?.replace(/[^/]+$/, "") || undefined, projectPaths: wproj };
+}
+
+// --- 37. Substance ---
+export function listSubstanceAssets(root: string): string[] {
+  const sbsar = listFilesRecursive(root, ASSETS, { ext: ".sbsar" });
+  const sbs = listFilesRecursive(root, ASSETS, { ext: ".sbs" });
+  return [...sbsar, ...sbs];
+}
+
+// --- 38. SpeedTree ---
+export function listSpeedTreeAssets(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".spm" }).concat(listFilesRecursive(root, ASSETS, { ext: ".stm" }));
+}
+
+// --- 39. Lottie ---
+export function listLottieAssets(root: string): string[] {
+  const lottieDir = join(ASSETS, "Lottie");
+  if (existsSync(join(root, lottieDir))) return listFilesRecursive(root, lottieDir, { ext: ".json" });
+  return listFilesRecursive(root, ASSETS, { ext: ".json" }).filter((p) => p.toLowerCase().includes("lottie"));
+}
+
+// --- 40. Analytics / crash reporting ---
+export function getAnalyticsOrCrashConfig(root: string): { services: string[] } {
+  const services: string[] = [];
+  const packages = getPackages(root).dependencies.map((d) => d.name.toLowerCase());
+  if (packages.some((p) => p.includes("analytics"))) services.push("Unity Analytics");
+  if (packages.some((p) => p.includes("sentry"))) services.push("Sentry");
+  if (packages.some((p) => p.includes("crashlytics"))) services.push("Crashlytics");
+  if (packages.some((p) => p.includes("bugsnag"))) services.push("BugSnag");
+  const assets = listFilesRecursive(root, ASSETS).filter((p) => p.toLowerCase().includes("sentry") || p.toLowerCase().includes("crashlytics"));
+  if (assets.length && !services.length) services.push("Crash/Analytics (asset detected)");
+  return { services };
+}
+
+// --- 41. Ads ---
+export function getAdsConfig(root: string): { sdkPresence: string[] } {
+  const packages = getPackages(root).dependencies.map((d) => d.name.toLowerCase());
+  const sdkPresence: string[] = [];
+  if (packages.some((p) => p.includes("advertisement") || p.includes("unity-ads"))) sdkPresence.push("Unity Ads");
+  if (packages.some((p) => p.includes("admob") || p.includes("google-mobile-ads"))) sdkPresence.push("AdMob");
+  if (packages.some((p) => p.includes("ironsource"))) sdkPresence.push("ironSource");
+  return { sdkPresence };
+}
+
+// --- 42. Git LFS ---
+export function getGitLfsTracked(root: string): string[] {
+  const content = readFileSafe(root, ".gitattributes");
+  if (!content) return [];
+  return content.split("\n").filter((l) => l.includes("lfs") || l.includes("filter=lfs"));
+}
+
+// --- 43. Plastic SCM ---
+export function getPlasticConfig(root: string): { plasticDir: boolean; workspaceName?: string } {
+  const plasticDir = existsSync(join(root, ".plastic"));
+  let workspaceName: string | undefined;
+  const conf = readFileSafe(root, ".plastic", "plastic.workspace");
+  if (conf) workspaceName = conf.match(/workspace\s+([^\n]+)/)?.[1]?.trim();
+  return { plasticDir, workspaceName };
+}

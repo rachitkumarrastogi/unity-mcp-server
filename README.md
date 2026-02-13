@@ -18,25 +18,37 @@ Unity MCP Server runs as a separate process and reads your Unity project from di
 
 ## Tools (by category)
 
-**Project & build** — `get_project_info`, `list_build_scenes`, `get_player_settings`, `list_packages`, `get_quality_settings`, `get_scripting_defines`, `get_project_version`, `get_changelog`
+**Project & build** — `get_project_info`, `list_build_scenes`, `get_player_settings`, `list_packages`, `get_quality_settings`, `get_scripting_defines`, `get_physics_settings`, `get_project_version`, `get_changelog`
 
-**Code & assemblies** — `list_assemblies`, `list_scripts`, `find_scripts_by_content`
+**Code & assemblies** — `list_assemblies`, `list_scripts`, `find_scripts_by_content`, `get_assembly_dependency_graph`, `list_editor_scripts`
 
-**Scenes & prefabs** — `list_all_scenes`, `get_scene_summary`, `list_prefabs`
+**Scenes & prefabs** — `list_all_scenes`, `get_scene_summary`, `list_prefabs`, `get_prefab_script_guids`
 
-**Assets & references** — `get_asset_folder_tree`, `list_assets_by_extension`, `find_references` (by path or GUID)
+**Assets & references** — `get_asset_folder_tree`, `list_assets_by_extension`, `find_references`, `list_large_assets`
 
-**Materials & shaders** — `list_materials`, `list_shaders`
+**Materials & shaders** — `list_materials`, `list_shaders`, `list_shader_graphs`, `list_vfx_graphs`
 
-**Animation** — `list_animator_controllers`, `list_animation_clips`, `get_animator_states`
+**Animation** — `list_animator_controllers`, `list_animation_clips`, `get_animator_states`, `list_timeline_playables`
 
-**Audio** — `list_audio_clips`, `list_audio_mixers`
+**2D & sprites** — `list_sprite_atlases`, `list_tilemap_assets`
+
+**Rendering** — `list_render_pipelines` (URP/HDRP, volume profiles)
+
+**TextMeshPro & UI** — `list_tmp_fonts`, `get_tmp_settings_path`, `list_ui_documents` (UXML, USS)
+
+**Input** — `get_input_axes`, `list_input_action_assets`, `get_input_actions_summary`
+
+**Tags & layers** — `get_tags_and_layers`
 
 **Addressables & localization** — `get_addressables_info`, `get_localization_tables`
 
-**Input, tags & layers** — `get_input_axes`, `get_tags_and_layers`
+**Audio** — `list_audio_clips`, `list_audio_mixers`
 
 **Testing & docs** — `list_test_assemblies`, `get_repo_docs`, `read_agent_docs`
+
+**CI & version control** — `list_ci_configs`, `list_presets`, `get_git_lfs_tracked`, `get_plastic_config`
+
+**Integrations (config discovery)** — `get_playfab_config`, `list_figma_related_assets`, `get_firebase_config`, `get_steam_config`, `get_discord_config`, `get_fmod_config`, `get_wwise_config`, `list_substance_assets`, `list_speedtree_assets`, `list_lottie_assets`, `get_analytics_or_crash_config`, `get_ads_config`
 
 All tools read from the project filesystem only; no Unity Editor is required.
 

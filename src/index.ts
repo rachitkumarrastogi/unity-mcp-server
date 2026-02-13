@@ -24,7 +24,7 @@ async function main() {
 
   const server = new McpServer({
     name: "unity-mcp-server",
-    version: "1.0.0",
+    version: "1.2.0",
   });
 
   const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
@@ -325,6 +325,106 @@ async function main() {
       return text(content ?? "(No CHANGELOG found)");
     }
   );
+
+  // --- 16. Physics ---
+  server.registerTool("get_physics_settings", { description: "Get Physics/DynamicsManager or Physics2D settings (key-value).", inputSchema: {} }, async () => json(R.getPhysicsSettings(projectRoot)));
+
+  // --- 17. Render pipelines ---
+  server.registerTool("list_render_pipelines", { description: "List render pipeline assets and volume profiles (URP/HDRP).", inputSchema: {} }, async () => json(R.listRenderPipelines(projectRoot)));
+
+  // --- 18. Timeline ---
+  server.registerTool("list_timeline_playables", { description: "List Timeline .playable assets.", inputSchema: {} }, async () => json(R.listTimelinePlayables(projectRoot)));
+
+  // --- 19. Sprites / 2D ---
+  server.registerTool("list_sprite_atlases", { description: "List Sprite Atlas (.spriteatlas) assets.", inputSchema: {} }, async () => json(R.listSpriteAtlases(projectRoot)));
+  server.registerTool("list_tilemap_assets", { description: "List tilemap-related .asset files.", inputSchema: {} }, async () => json(R.listTilemapAssets(projectRoot)));
+
+  // --- 20. Shader Graph / VFX ---
+  server.registerTool("list_shader_graphs", { description: "List Shader Graph (.shadergraph) assets.", inputSchema: {} }, async () => json(R.listShaderGraphs(projectRoot)));
+  server.registerTool("list_vfx_graphs", { description: "List VFX Graph (.vfx) assets.", inputSchema: {} }, async () => json(R.listVfxGraphs(projectRoot)));
+
+  // --- 21. TextMeshPro ---
+  server.registerTool("list_tmp_fonts", { description: "List TMP/font-related assets.", inputSchema: {} }, async () => json(R.listTmpFonts(projectRoot)));
+  server.registerTool("get_tmp_settings_path", { description: "Get path to TMP Settings asset if present.", inputSchema: {} }, async () => json(R.getTmpSettingsPath(projectRoot)));
+
+  // --- 22. UI Toolkit ---
+  server.registerTool("list_ui_documents", { description: "List UI Toolkit .uxml and .uss files.", inputSchema: {} }, async () => json(R.listUiDocuments(projectRoot)));
+
+  // --- 23. New Input System ---
+  server.registerTool("list_input_action_assets", { description: "List New Input System .inputactions assets.", inputSchema: {} }, async () => json(R.listInputActionAssets(projectRoot)));
+  server.registerTool(
+    "get_input_actions_summary",
+    { description: "Get action maps and actions from an .inputactions file.", inputSchema: { path: z.string().describe("e.g. Assets/Input/Player.inputactions") } },
+    async (args: unknown) => json(R.getInputActionsSummary(projectRoot, (args as { path: string }).path))
+  );
+
+  // --- 24. Presets ---
+  server.registerTool("list_presets", { description: "List .preset assets.", inputSchema: {} }, async () => json(R.listPresets(projectRoot)));
+
+  // --- 25. Editor scripts ---
+  server.registerTool("list_editor_scripts", { description: "List C# scripts in Editor folders or with Editor in path.", inputSchema: {} }, async () => json(R.listEditorScripts(projectRoot)));
+
+  // --- 26. Prefab script refs ---
+  server.registerTool(
+    "get_prefab_script_guids",
+    { description: "Get script GUIDs (MonoBehaviour) referenced by a prefab.", inputSchema: { prefab_path: z.string().describe("e.g. Assets/Prefabs/Player.prefab") } },
+    async (args: unknown) => json(R.getPrefabScriptGuids(projectRoot, (args as { prefab_path: string }).prefab_path))
+  );
+
+  // --- 27. Assembly dependency graph ---
+  server.registerTool("get_assembly_dependency_graph", { description: "Get assembly definition dependency graph (nodes and edges).", inputSchema: {} }, async () => json(R.getAssemblyDependencyGraph(projectRoot)));
+
+  // --- 28. CI configs ---
+  server.registerTool("list_ci_configs", { description: "List CI config files (.github/workflows, Jenkinsfile, unity-cloud-build).", inputSchema: {} }, async () => json(R.listCiConfigs(projectRoot)));
+
+  // --- 29. Large assets ---
+  server.registerTool(
+    "list_large_assets",
+    { description: "List assets over a size threshold (default 5 MB).", inputSchema: { min_size_mb: z.number().optional().default(5) } },
+    async (args: unknown) => json(R.listLargeAssets(projectRoot, (args as { min_size_mb?: number })?.min_size_mb ?? 5))
+  );
+
+  // --- 30. PlayFab ---
+  server.registerTool("get_playfab_config", { description: "Get PlayFab config (title ID, config paths) from project. No secrets.", inputSchema: {} }, async () => json(R.getPlayFabConfig(projectRoot)));
+
+  // --- 31. Figma ---
+  server.registerTool("list_figma_related_assets", { description: "List assets in Figma folder or with figma in path.", inputSchema: {} }, async () => json(R.listFigmaRelatedAssets(projectRoot)));
+
+  // --- 32. Firebase ---
+  server.registerTool("get_firebase_config", { description: "Get Firebase config (GoogleServices path, project ID). No secrets.", inputSchema: {} }, async () => json(R.getFirebaseConfig(projectRoot)));
+
+  // --- 33. Steam ---
+  server.registerTool("get_steam_config", { description: "Get Steam config (steam_appid.txt, Steamworks path).", inputSchema: {} }, async () => json(R.getSteamConfig(projectRoot)));
+
+  // --- 34. Discord ---
+  server.registerTool("get_discord_config", { description: "Detect Discord SDK path in Plugins.", inputSchema: {} }, async () => json(R.getDiscordConfig(projectRoot)));
+
+  // --- 35. FMOD ---
+  server.registerTool("get_fmod_config", { description: "Get FMOD config (banks path, bank files).", inputSchema: {} }, async () => json(R.getFmodConfig(projectRoot)));
+
+  // --- 36. Wwise ---
+  server.registerTool("get_wwise_config", { description: "Get Wwise config (sound banks, project paths).", inputSchema: {} }, async () => json(R.getWwiseConfig(projectRoot)));
+
+  // --- 37. Substance ---
+  server.registerTool("list_substance_assets", { description: "List Substance .sbsar and .sbs assets.", inputSchema: {} }, async () => json(R.listSubstanceAssets(projectRoot)));
+
+  // --- 38. SpeedTree ---
+  server.registerTool("list_speedtree_assets", { description: "List SpeedTree .spm and .stm assets.", inputSchema: {} }, async () => json(R.listSpeedTreeAssets(projectRoot)));
+
+  // --- 39. Lottie ---
+  server.registerTool("list_lottie_assets", { description: "List Lottie-related JSON assets.", inputSchema: {} }, async () => json(R.listLottieAssets(projectRoot)));
+
+  // --- 40. Analytics / crash ---
+  server.registerTool("get_analytics_or_crash_config", { description: "Detect analytics/crash reporting services (Unity, Sentry, Crashlytics, BugSnag).", inputSchema: {} }, async () => json(R.getAnalyticsOrCrashConfig(projectRoot)));
+
+  // --- 41. Ads ---
+  server.registerTool("get_ads_config", { description: "Detect ad SDK presence (Unity Ads, AdMob, ironSource).", inputSchema: {} }, async () => json(R.getAdsConfig(projectRoot)));
+
+  // --- 42. Git LFS ---
+  server.registerTool("get_git_lfs_tracked", { description: "Get Git LFS patterns from .gitattributes.", inputSchema: {} }, async () => json(R.getGitLfsTracked(projectRoot)));
+
+  // --- 43. Plastic SCM ---
+  server.registerTool("get_plastic_config", { description: "Get Plastic SCM config (.plastic, workspace name).", inputSchema: {} }, async () => json(R.getPlasticConfig(projectRoot)));
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
