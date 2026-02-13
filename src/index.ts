@@ -6,7 +6,7 @@
 
 import { resolve } from "node:path";
 import { z } from "zod";
-import * as R from "./readers.js";
+import * as R from "./readers/index.js";
 
 function getProjectRoot(): string {
   const env = process.env.UNITY_PROJECT_PATH;
