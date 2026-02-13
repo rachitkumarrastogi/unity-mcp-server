@@ -1,6 +1,6 @@
 # Unity MCP Server
 
-A lightweight [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that gives AI assistants structured access to your Unity projects. Query project metadata, build settings, and agent documentation from any MCP-capable client—without running the Unity Editor.
+**MCP server for Unity** — A lightweight [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that gives AI assistants structured access to your Unity projects. Use with Cursor, Claude Desktop, or any MCP client. Query project metadata, build settings, and agent documentation from any MCP-capable client—without running the Unity Editor.
 
 ---
 
@@ -93,3 +93,9 @@ This repository contains only generic tooling: no game code, assets, API keys, o
 ## Further reading
 
 See [PURPOSE.md](./PURPOSE.md) for the rationale behind this server and when it is useful for your workflow.
+
+---
+
+## Discoverability
+
+Search for **Unity MCP server**, **MCP Unity**, or **Model Context Protocol Unity** to find this repo. You can also browse the [MCP Registry](https://registry.modelcontextprotocol.io/) for published servers (this server may be listed there once submitted).
