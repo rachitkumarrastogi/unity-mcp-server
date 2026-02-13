@@ -16,13 +16,29 @@ Unity MCP Server runs as a separate process and reads your Unity project from di
 
 ---
 
-## Features
+## Tools (by category)
 
-| Tool | Description |
-|------|-------------|
-| `get_project_info` | Returns project root path, Unity version, and build scene count. |
-| `list_build_scenes` | Returns scenes in `EditorBuildSettings` in build order (JSON). |
-| `read_agent_docs` | Returns contents of `.agents/AGENT.md`; optionally includes `REPO_UNDERSTANDING.md`. |
+**Project & build** — `get_project_info`, `list_build_scenes`, `get_player_settings`, `list_packages`, `get_quality_settings`, `get_scripting_defines`, `get_project_version`, `get_changelog`
+
+**Code & assemblies** — `list_assemblies`, `list_scripts`, `find_scripts_by_content`
+
+**Scenes & prefabs** — `list_all_scenes`, `get_scene_summary`, `list_prefabs`
+
+**Assets & references** — `get_asset_folder_tree`, `list_assets_by_extension`, `find_references` (by path or GUID)
+
+**Materials & shaders** — `list_materials`, `list_shaders`
+
+**Animation** — `list_animator_controllers`, `list_animation_clips`, `get_animator_states`
+
+**Audio** — `list_audio_clips`, `list_audio_mixers`
+
+**Addressables & localization** — `get_addressables_info`, `get_localization_tables`
+
+**Input, tags & layers** — `get_input_axes`, `get_tags_and_layers`
+
+**Testing & docs** — `list_test_assemblies`, `get_repo_docs`, `read_agent_docs`
+
+All tools read from the project filesystem only; no Unity Editor is required.
 
 ---
 
