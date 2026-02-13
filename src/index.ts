@@ -426,6 +426,14 @@ async function main() {
   // --- 43. Plastic SCM ---
   server.registerTool("get_plastic_config", { description: "Get Plastic SCM config (.plastic, workspace name).", inputSchema: {} }, async () => json(R.getPlasticConfig(projectRoot)));
 
+  // --- 44–49. Unity 6 / Feb 2026 audit additions ---
+  server.registerTool("get_graphics_settings", { description: "Get Graphics settings (ProjectSettings/GraphicsSettings.asset).", inputSchema: {} }, async () => json(R.getGraphicsSettings(projectRoot)));
+  server.registerTool("get_time_settings", { description: "Get Time/Fixed timestep settings (TimeManager.asset).", inputSchema: {} }, async () => json(R.getTimeSettings(projectRoot)));
+  server.registerTool("list_subscenes", { description: "List ECS/DOTS .subscene assets.", inputSchema: {} }, async () => json(R.listSubscenes(projectRoot)));
+  server.registerTool("list_visual_scripting_assets", { description: "List Visual Scripting (Bolt/Unity) .asset files in Ludiq or com.unity.visualscripting.", inputSchema: {} }, async () => json(R.listVisualScriptingAssets(projectRoot)));
+  server.registerTool("get_build_target_info", { description: "Get active build target / platform from ProjectSettings.", inputSchema: {} }, async () => json(R.getBuildTargetInfo(projectRoot)));
+  server.registerTool("get_feature_set_inference", { description: "Infer which Unity 6 feature sets (2D, ECS, AR, etc.) are used from package manifest.", inputSchema: {} }, async () => json(R.getFeatureSetInference(projectRoot)));
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }

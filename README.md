@@ -45,6 +45,10 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 | `get_quality_settings` | Quality levels |
 | `get_scripting_defines` | Global and per-assembly defines |
 | `get_physics_settings` | Physics / Physics2D settings |
+| `get_graphics_settings` | Graphics settings (GraphicsSettings.asset) |
+| `get_time_settings` | Time / fixed timestep (TimeManager.asset) |
+| `get_build_target_info` | Active build target / platform |
+| `get_feature_set_inference` | Infer Unity 6 feature sets from packages (2D, ECS, AR, etc.) |
 | `get_project_version` | Bundle version |
 | `get_changelog` | CHANGELOG contents |
 
@@ -60,6 +64,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 | `find_scripts_by_content` | By type/pattern (e.g. MonoBehaviour) |
 | `get_assembly_dependency_graph` | Nodes and edges |
 | `list_editor_scripts` | Scripts in Editor folders |
+| `list_visual_scripting_assets` | Bolt / Unity Visual Scripting .asset files |
 
 </details>
 
@@ -72,6 +77,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 | `get_scene_summary` | Root GameObjects, component count |
 | `list_prefabs` | Prefabs (optional path prefix) |
 | `get_prefab_script_guids` | Script GUIDs used by a prefab |
+| `list_subscenes` | ECS/DOTS .subscene assets |
 
 </details>
 

@@ -798,3 +798,57 @@ export function getPlasticConfig(root: string): { plasticDir: boolean; workspace
   if (conf) workspaceName = conf.match(/workspace\s+([^\n]+)/)?.[1]?.trim();
   return { plasticDir, workspaceName };
 }
+
+// --- 44. Graphics settings (Unity 6) ---
+export function getGraphicsSettings(root: string): Record<string, string> {
+  const content = readFileSafe(root, PROJECT_SETTINGS, "GraphicsSettings.asset");
+  return content ? parseUnityKeyValue(content) : {};
+}
+
+// --- 45. Time / fixed timestep ---
+export function getTimeSettings(root: string): Record<string, string> {
+  const content = readFileSafe(root, PROJECT_SETTINGS, "TimeManager.asset");
+  return content ? parseUnityKeyValue(content) : {};
+}
+
+// --- 46. ECS / DOTS subscenes ---
+export function listSubscenes(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".subscene" });
+}
+
+// --- 47. Visual Scripting (Bolt / Unity Visual Scripting) ---
+export function listVisualScriptingAssets(root: string): string[] {
+  const vsPaths = ["Assets/Ludiq", "Assets/Unity.VisualScripting", "Packages/com.unity.visualscripting"];
+  const out: string[] = [];
+  for (const dir of vsPaths) {
+    if (existsSync(join(root, dir))) out.push(...listFilesRecursive(root, dir, { ext: ".asset" }));
+  }
+  return [...new Set(out)].slice(0, 100);
+}
+
+// --- 48. Active build target / platform ---
+export function getBuildTargetInfo(root: string): { activeBuildTarget?: string; activeBuildTargetId?: string } {
+  const content = readFileSafe(root, PROJECT_SETTINGS, "ProjectSettings.asset");
+  if (!content) return {};
+  const m = content.match(/m_ActiveBuildTarget:\s*(\d+)/);
+  const id = m?.[1];
+  const names: Record<string, string> = { "0": "Unknown", "1": "Standalone", "2": "iOS", "4": "Android", "5": "WebGL", "6": "Windows Store Apps", "9": "PS4", "10": "XboxOne", "13": "tvOS", "19": "Switch", "20": "Lumin", "21": "Stadia", "22": "CloudRendering", "23": "GameCoreScarlett", "24": "GameCoreXboxOne", "25": "PS5" };
+  return { activeBuildTarget: id ? names[id] || id : undefined, activeBuildTargetId: id };
+}
+
+// --- 49. Unity 6 feature set inference from packages ---
+export function getFeatureSetInference(root: string): { detected: string[]; packageCount: number } {
+  const { dependencies } = getPackages(root);
+  const names = dependencies.map((d) => d.name.toLowerCase());
+  const detected: string[] = [];
+  if (names.some((n) => n.includes("2d") && (n.includes("sprite") || n.includes("tilemap")))) detected.push("2D");
+  if (names.some((n) => n.includes("entities") || n.includes("dots") || n.includes("ecs"))) detected.push("ECS");
+  if (names.some((n) => n.includes("animation") || n.includes("timeline"))) detected.push("3D Characters & Animation");
+  if (names.some((n) => n.includes("terrain") || n.includes("world"))) detected.push("3D World Building");
+  if (names.some((n) => n.includes("ar") || n.includes("xr") || n.includes("augmented"))) detected.push("AR");
+  if (names.some((n) => n.includes("visualscripting") || n.includes("bolt"))) detected.push("Visual Scripting");
+  if (names.some((n) => n.includes("cinemachine") || n.includes("timeline"))) detected.push("Gameplay & Storytelling");
+  if (names.some((n) => n.includes("mobile") || n.includes("android") || n.includes("ios"))) detected.push("Mobile");
+  if (names.some((n) => n.includes("vr") || n.includes("xr"))) detected.push("VR");
+  return { detected: [...new Set(detected)], packageCount: dependencies.length };
+}
