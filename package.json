@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "unity-mcp-server": "./dist/index.js"
+    "unity-mcp-server": "dist/index.js"
   },
   "scripts": {
     "build": "node node_modules/typescript/bin/tsc",
@@ -27,6 +27,6 @@
   "mcpName": "io.github.rachitkumarrastogi/unity-mcp-server",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rachitkumarrastogi/unity-mcp-server.git"
+    "url": "git+https://github.com/rachitkumarrastogi/unity-mcp-server.git"
   }
 }
