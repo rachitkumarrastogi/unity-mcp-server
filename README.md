@@ -30,6 +30,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 | [🎨 Materials & shaders](#materials-shaders) | [🎞️ Animation](#animation) | [🖼️ 2D & sprites](#2d-sprites) | [✨ Rendering](#rendering) |
 | [📝 TextMeshPro & UI](#textmeshpro-ui) | [🎮 Input](#input) | [🏷️ Tags & layers](#tags-layers) | [🌐 Addressables & localization](#addressables-localization) |
 | [🔊 Audio](#audio) | [🧪 Testing & docs](#testing-docs) | [🔄 CI & version control](#ci-version-control) | [🔌 Integrations](#integrations) |
+| [⚡ Speed & productivity](#speed) | | | |
 
 ---
 
@@ -227,6 +228,20 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 | `list_lottie_assets` | Lottie JSON assets |
 | `get_analytics_or_crash_config` | Sentry, Crashlytics, BugSnag, etc. |
 | `get_ads_config` | Unity Ads, AdMob, ironSource presence |
+
+</details>
+
+<details id="speed">
+<summary><strong>⚡ Speed & productivity</strong></summary>
+
+| Tool | Description |
+|------|-------------|
+| `get_project_stats` | One-shot stats: scripts, prefabs, scenes, materials, animations, assemblies, packages |
+| `get_scene_referenced_assets` | Asset paths referenced by a scene (build size / impact) |
+| `detect_assembly_cycles` | Circular refs in assembly definitions (fix compile errors) |
+| `find_script_references` | C# files that reference a type/class name (refactoring) |
+| `get_broken_script_refs` | Prefabs/scenes with missing script refs |
+| `get_prefab_dependencies` | Asset paths referenced by a prefab (impact analysis) |
 
 </details>
 

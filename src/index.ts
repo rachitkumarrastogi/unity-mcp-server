@@ -24,7 +24,7 @@ async function main() {
 
   const server = new McpServer({
     name: "unity-mcp-server",
-    version: "1.2.0",
+    version: "1.3.0",
   });
 
   const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
@@ -433,6 +433,26 @@ async function main() {
   server.registerTool("list_visual_scripting_assets", { description: "List Visual Scripting (Bolt/Unity) .asset files in Ludiq or com.unity.visualscripting.", inputSchema: {} }, async () => json(R.listVisualScriptingAssets(projectRoot)));
   server.registerTool("get_build_target_info", { description: "Get active build target / platform from ProjectSettings.", inputSchema: {} }, async () => json(R.getBuildTargetInfo(projectRoot)));
   server.registerTool("get_feature_set_inference", { description: "Infer which Unity 6 feature sets (2D, ECS, AR, etc.) are used from package manifest.", inputSchema: {} }, async () => json(R.getFeatureSetInference(projectRoot)));
+
+  // --- Speed tools: go faster ---
+  server.registerTool("get_project_stats", { description: "One-shot project stats: script count, prefabs, scenes, materials, animations, assemblies, packages.", inputSchema: {} }, async () => json(R.getProjectStats(projectRoot)));
+  server.registerTool(
+    "get_scene_referenced_assets",
+    { description: "List asset paths referenced by a scene (GUIDs resolved). Helps build size and impact.", inputSchema: { scene_path: z.string().describe("e.g. Assets/Scenes/Main.unity") } },
+    async (args: unknown) => json(R.getSceneReferencedAssets(projectRoot, (args as { scene_path: string }).scene_path))
+  );
+  server.registerTool("detect_assembly_cycles", { description: "Detect circular references in assembly definitions. Speeds up fixing compile errors.", inputSchema: {} }, async () => json(R.detectAssemblyCycles(projectRoot)));
+  server.registerTool(
+    "find_script_references",
+    { description: "Find C# files that reference a type/class name. Speeds up refactoring.", inputSchema: { type_or_class_name: z.string().describe("e.g. GameManager or MonoBehaviour") } },
+    async (args: unknown) => json(R.findScriptReferences(projectRoot, (args as { type_or_class_name: string }).type_or_class_name))
+  );
+  server.registerTool("get_broken_script_refs", { description: "List prefabs/scenes that reference a script GUID with no .cs in project (missing script refs).", inputSchema: {} }, async () => json(R.getBrokenScriptRefs(projectRoot)));
+  server.registerTool(
+    "get_prefab_dependencies",
+    { description: "List asset paths referenced by a prefab. Helps impact analysis.", inputSchema: { prefab_path: z.string().describe("e.g. Assets/Prefabs/Player.prefab") } },
+    async (args: unknown) => json(R.getPrefabDependencies(projectRoot, (args as { prefab_path: string }).prefab_path))
+  );
 
   const transport = new StdioServerTransport();
   await server.connect(transport);

@@ -852,3 +852,142 @@ export function getFeatureSetInference(root: string): { detected: string[]; pack
   if (names.some((n) => n.includes("vr") || n.includes("xr"))) detected.push("VR");
   return { detected: [...new Set(detected)], packageCount: dependencies.length };
 }
+
+// --- Speed tools: help developers go faster ---
+
+/** Project stats in one call (script count, prefab count, etc.). */
+export function getProjectStats(root: string): Record<string, number> {
+  return {
+    scripts: listScripts(root).length,
+    prefabs: getPrefabs(root).length,
+    scenes: getAllScenes(root).length,
+    materials: getMaterials(root).length,
+    animatorControllers: getAnimatorControllers(root).length,
+    animationClips: getAnimationClips(root).length,
+    assemblies: getAssemblyDefinitions(root).length,
+    packages: getPackages(root).dependencies.length,
+  };
+}
+
+/** All GUIDs referenced in a scene file; resolve to asset paths where possible. */
+export function getSceneReferencedAssets(root: string, scenePath: string): { resolved: string[]; unresolvedGuids: string[] } {
+  const content = readFileSafe(root, scenePath);
+  if (!content) return { resolved: [], unresolvedGuids: [] };
+  const guidRe = /guid:\s*([a-f0-9]{32})/g;
+  const guids = new Set<string>();
+  let m: RegExpExecArray | null;
+  while ((m = guidRe.exec(content)) !== null) guids.add(m[1]);
+  const resolved: string[] = [];
+  const unresolved: string[] = [];
+  for (const g of guids) {
+    const path = getAssetPathByGuid(root, g);
+    if (path) resolved.push(path);
+    else unresolved.push(g);
+  }
+  return { resolved: [...new Set(resolved)], unresolvedGuids: unresolved };
+}
+
+/** Detect circular references in assembly definition graph. */
+export function detectAssemblyCycles(root: string): string[][] {
+  const { nodes, edges } = getAssemblyDependencyGraph(root);
+  const adj = new Map<string, string[]>();
+  for (const n of nodes) adj.set(n, []);
+  for (const [a, b] of edges) adj.get(a)?.push(b);
+  const cycles: string[][] = [];
+  const stack: string[] = [];
+  const index = new Map<string, number>();
+  const lowlink = new Map<string, number>();
+  let idx = 0;
+  const scc: string[] = [];
+  function strongConnect(v: string) {
+    index.set(v, idx);
+    lowlink.set(v, idx);
+    idx++;
+    stack.push(v);
+    for (const w of adj.get(v) || []) {
+      if (!index.has(w)) {
+        strongConnect(w);
+        lowlink.set(v, Math.min(lowlink.get(v)!, lowlink.get(w)!));
+      } else if (stack.includes(w)) lowlink.set(v, Math.min(lowlink.get(v)!, index.get(w)!));
+    }
+    if (lowlink.get(v) === index.get(v)) {
+      const comp: string[] = [];
+      let w: string;
+      do {
+        w = stack.pop()!;
+        comp.push(w);
+      } while (w !== v);
+      if (comp.length > 1) cycles.push(comp);
+    }
+  }
+  for (const n of nodes) if (!index.has(n)) strongConnect(n);
+  return cycles;
+}
+
+/** Find .cs files that reference a given type/class name (grep). */
+export function findScriptReferences(root: string, typeOrClassName: string): string[] {
+  const files = listScripts(root);
+  const re = new RegExp(typeOrClassName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  const out: string[] = [];
+  for (const rel of files) {
+    const content = readFileSafe(root, rel);
+    if (content && re.test(content)) out.push(rel);
+  }
+  return out;
+}
+
+/** Prefabs/scenes that reference a script GUID that has no .cs.meta in the project (broken refs). */
+export function getBrokenScriptRefs(root: string): { assetPath: string; missingScriptGuid: string }[] {
+  const exts = [".prefab", ".unity"];
+  const scriptGuids = new Set<string>();
+  const metaDir = join(root, ASSETS);
+  const stack: string[] = [ASSETS];
+  while (stack.length) {
+    const d = stack.pop()!;
+    const fullD = join(root, d);
+    try {
+      for (const e of readdirSync(fullD)) {
+        const rel = join(d, e);
+        const fullPath = join(root, rel);
+        if (statSync(fullPath).isDirectory()) {
+          if (!e.startsWith(".")) stack.push(rel);
+        } else if (e.endsWith(".meta")) {
+          const content = readFileSync(fullPath, "utf-8");
+          const guid = content.match(/^guid:\s*([a-f0-9]{32})/m)?.[1];
+          const assetExt = rel.replace(/\.meta$/, "").split(".").pop()?.toLowerCase();
+          if (guid && assetExt === "cs") scriptGuids.add(guid);
+        }
+      }
+    } catch {
+      /* */
+    }
+  }
+  const broken: { assetPath: string; missingScriptGuid: string }[] = [];
+  for (const rel of listFilesRecursive(root, ASSETS).filter((p) => exts.some((x) => p.endsWith(x)))) {
+    const content = readFileSafe(root, rel);
+    if (!content) continue;
+    const scriptRefRe = /m_Script:\s*\{\s*fileID:\s*\d+,\s*guid:\s*([a-f0-9]{32})/g;
+    let m: RegExpExecArray | null;
+    while ((m = scriptRefRe.exec(content)) !== null) {
+      const guid = m[1];
+      if (!scriptGuids.has(guid)) broken.push({ assetPath: rel, missingScriptGuid: guid });
+    }
+  }
+  return broken;
+}
+
+/** Asset paths referenced by a prefab (GUIDs resolved to paths). */
+export function getPrefabDependencies(root: string, prefabPath: string): string[] {
+  const content = readFileSafe(root, prefabPath);
+  if (!content) return [];
+  const guidRe = /guid:\s*([a-f0-9]{32})/g;
+  const guids = new Set<string>();
+  let m: RegExpExecArray | null;
+  while ((m = guidRe.exec(content)) !== null) guids.add(m[1]);
+  const paths: string[] = [];
+  for (const g of guids) {
+    const p = getAssetPathByGuid(root, g);
+    if (p && p !== prefabPath) paths.push(p);
+  }
+  return [...new Set(paths)];
+}
