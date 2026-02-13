@@ -2,6 +2,8 @@
 
 **MCP server for Unity** — Gives AI assistants (Cursor, Claude Desktop, etc.) structured access to your Unity project. No Unity Editor required.
 
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-View_this_server-6e7681?style=flat-square&labelColor=24292f)](https://registry.modelcontextprotocol.io/?q=unity-mcp-server)
+
 <p align="center">
   <img src="assets/unity-mcp-server-diagram.png" alt="Cursor / IDE → Unity MCP Server → Unity Project" width="720">
 </p>
@@ -20,11 +22,19 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 
 ## Tools
 
-**Jump to:**  
-[Project & build](#project-build) · [Code & assemblies](#code-assemblies) · [Scenes & prefabs](#scenes-prefabs) · [Assets & references](#assets-references) · [Materials & shaders](#materials-shaders) · [Animation](#animation) · [2D & sprites](#2d-sprites) · [Rendering](#rendering) · [TextMeshPro & UI](#textmeshpro-ui) · [Input](#input) · [Tags & layers](#tags-layers) · [Addressables & localization](#addressables-localization) · [Audio](#audio) · [Testing & docs](#testing-docs) · [CI & version control](#ci-version-control) · [Integrations](#integrations)
+*Click a category to expand and see its tools.*
+
+| | | | |
+|:--|:--|:--|:--|
+| [📦 Project & build](#project-build) | [💻 Code & assemblies](#code-assemblies) | [🎬 Scenes & prefabs](#scenes-prefabs) | [📁 Assets & references](#assets-references) |
+| [🎨 Materials & shaders](#materials-shaders) | [🎞️ Animation](#animation) | [🖼️ 2D & sprites](#2d-sprites) | [✨ Rendering](#rendering) |
+| [📝 TextMeshPro & UI](#textmeshpro-ui) | [🎮 Input](#input) | [🏷️ Tags & layers](#tags-layers) | [🌐 Addressables & localization](#addressables-localization) |
+| [🔊 Audio](#audio) | [🧪 Testing & docs](#testing-docs) | [🔄 CI & version control](#ci-version-control) | [🔌 Integrations](#integrations) |
+
+---
 
 <details open id="project-build">
-<summary><strong>Project & build</strong></summary>
+<summary><strong>📦 Project & build</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -41,7 +51,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="code-assemblies">
-<summary><strong>Code & assemblies</strong></summary>
+<summary><strong>💻 Code & assemblies</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -54,7 +64,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="scenes-prefabs">
-<summary><strong>Scenes & prefabs</strong></summary>
+<summary><strong>🎬 Scenes & prefabs</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -66,7 +76,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="assets-references">
-<summary><strong>Assets & references</strong></summary>
+<summary><strong>📁 Assets & references</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -78,7 +88,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="materials-shaders">
-<summary><strong>Materials & shaders</strong></summary>
+<summary><strong>🎨 Materials & shaders</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -90,7 +100,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="animation">
-<summary><strong>Animation</strong></summary>
+<summary><strong>🎞️ Animation</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -102,7 +112,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="2d-sprites">
-<summary><strong>2D & sprites</strong></summary>
+<summary><strong>🖼️ 2D & sprites</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -112,7 +122,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="rendering">
-<summary><strong>Rendering</strong></summary>
+<summary><strong>✨ Rendering</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -121,7 +131,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="textmeshpro-ui">
-<summary><strong>TextMeshPro & UI</strong></summary>
+<summary><strong>📝 TextMeshPro & UI</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -132,7 +142,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="input">
-<summary><strong>Input</strong></summary>
+<summary><strong>🎮 Input</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -143,7 +153,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="tags-layers">
-<summary><strong>Tags & layers</strong></summary>
+<summary><strong>🏷️ Tags & layers</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -152,7 +162,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="addressables-localization">
-<summary><strong>Addressables & localization</strong></summary>
+<summary><strong>🌐 Addressables & localization</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -162,7 +172,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="audio">
-<summary><strong>Audio</strong></summary>
+<summary><strong>🔊 Audio</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -172,7 +182,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="testing-docs">
-<summary><strong>Testing & docs</strong></summary>
+<summary><strong>🧪 Testing & docs</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -183,7 +193,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="ci-version-control">
-<summary><strong>CI & version control</strong></summary>
+<summary><strong>🔄 CI & version control</strong></summary>
 
 | Tool | Description |
 |------|-------------|
@@ -195,7 +205,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 </details>
 
 <details id="integrations">
-<summary><strong>Integrations</strong> (config discovery only)</summary>
+<summary><strong>🔌 Integrations</strong> (config discovery only)</summary>
 
 | Tool | Description |
 |------|-------------|
@@ -275,6 +285,6 @@ No game code, assets, or secrets in this repo. The Unity project path is supplie
 
 ## More
 
+- [**View on MCP Registry**](https://registry.modelcontextprotocol.io/?q=unity-mcp-server) — Find this server in the official registry  
 - [PURPOSE.md](./PURPOSE.md) — Why this server exists and when to use it  
-- [MCP Registry](https://registry.modelcontextprotocol.io/) — This server is listed there  
 - Search: **Unity MCP server**, **MCP Unity**
