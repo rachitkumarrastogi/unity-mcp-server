@@ -360,5 +360,6 @@ This repository does not include game code, assets, or secrets. The Unity projec
 ## Documentation
 
 - [**MCP Registry**](https://registry.modelcontextprotocol.io/?q=unity-mcp-server) — Discover and install this server from the official registry.
-- [Purpose and use cases](./docs/PURPOSE.md)
-- [Publish to npm and MCP Registry](./docs/PUBLISH.md) · [Registry details](./docs/REGISTRY.md)
+- **Guides:** [Purpose and use cases](./docs/guides/PURPOSE.md) · [Publish to npm and MCP Registry](./docs/guides/PUBLISH.md) · [How it helps Unity developers](./docs/guides/HOW_IT_HELPS_UNITY_DEVELOPERS.md)
+- **Reference:** [Registry details](./docs/reference/REGISTRY.md) · [Comparison and rating](./docs/reference/COMPARISON_AND_RATING.md) · [Audits and gap analysis](./docs/reference/README.md)
+- **Release notes:** [All versions](./docs/release-notes/README.md)
