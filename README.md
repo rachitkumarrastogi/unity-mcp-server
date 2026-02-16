@@ -2,7 +2,7 @@
 
 **MCP server for Unity** — Gives AI assistants (Cursor, Claude Desktop, etc.) structured access to your Unity project. No Unity Editor required.
 
-[![MCP Registry](https://img.shields.io/badge/MCP_Registry-View_this_server-6e7681?style=flat-square&labelColor=24292f)](https://registry.modelcontextprotocol.io/?q=unity-mcp-server)
+[![npm version](https://img.shields.io/npm/v/unity-mcp-server.svg)](https://www.npmjs.com/package/unity-mcp-server) [![MCP Registry](https://img.shields.io/badge/MCP_Registry-View_this_server-6e7681?style=flat-square&labelColor=24292f)](https://registry.modelcontextprotocol.io/?q=unity-mcp-server)
 
 <p align="center">
   <img src="assets/unity-mcp-server-diagram.png" alt="Cursor / IDE → Unity MCP Server → Unity Project" width="720">
@@ -22,7 +22,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 
 ## Tools
 
-*Click a category to expand and see its tools.*
+Expand a category below to see the tools it includes.
 
 | | | | |
 |:--|:--|:--|:--|
@@ -52,6 +52,14 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 | `get_feature_set_inference` | Infer Unity 6 feature sets from packages (2D, ECS, AR, etc.) |
 | `get_project_version` | Bundle version |
 | `get_changelog` | CHANGELOG contents |
+| `get_audio_settings` | AudioManager.asset (global volume, reverb, DSP buffer) |
+| `get_navigation_settings` | NavMesh/agent settings from ProjectSettings |
+| `get_xr_settings` | XR/VR project settings |
+| `get_script_execution_order` | Script execution order (MonoManager) |
+| `get_version_control_settings` | Serialization mode, visible meta files |
+| `get_layer_collision_matrix` | Layer collision matrix and layer names |
+| `get_cloud_services_config` | Unity Cloud / Unity Connect config |
+| `get_package_dependency_graph` | Package dependency graph (manifest + lock) |
 
 </details>
 
@@ -76,7 +84,9 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 |------|-------------|
 | `list_all_scenes` | All .unity files under Assets |
 | `get_scene_summary` | Root GameObjects, component count |
+| `get_scene_components_by_type` | GameObjects in a scene with a component type (e.g. Camera, Light) |
 | `list_prefabs` | Prefabs (optional path prefix) |
+| `list_prefab_variants` | Prefabs that are variants of another prefab |
 | `get_prefab_script_guids` | Script GUIDs used by a prefab |
 | `list_subscenes` | ECS/DOTS .subscene assets |
 
@@ -91,6 +101,11 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 | `list_assets_by_extension` | By extension (e.g. .png, .fbx) |
 | `find_references` | Assets referencing a path or GUID |
 | `list_large_assets` | Files over N MB (default 5) |
+| `list_video_clips` | Video clip assets (.mp4, .mov, .webm, etc.) |
+| `list_legacy_font_assets` | Legacy fonts (.fontsettings, .ttf, .otf) — not TMP |
+| `list_render_textures` | RenderTexture assets |
+| `list_terrain_data` | TerrainData and TerrainLayer assets |
+| `list_lighting_settings_assets` | Lighting-related .asset files |
 
 </details>
 
@@ -115,6 +130,8 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 | `list_animation_clips` | .anim assets |
 | `get_animator_states` | State names from a controller |
 | `list_timeline_playables` | Timeline .playable assets |
+| `list_avatar_masks` | Avatar Mask (.mask) assets |
+| `list_animator_override_controllers` | AnimatorOverrideController assets |
 
 </details>
 
@@ -125,6 +142,7 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 |------|-------------|
 | `list_sprite_atlases` | Sprite Atlas assets |
 | `list_tilemap_assets` | Tilemap-related assets |
+| `list_sprite_assets` | Textures configured as sprites (spriteMode in .meta) |
 
 </details>
 
@@ -287,7 +305,7 @@ Add to your MCP settings:
 }
 ```
 
-Replace both paths with your actual paths. Other MCP clients: same pattern; set `UNITY_PROJECT_PATH` in the environment.
+Replace the paths with your actual paths. For other MCP clients, use the same pattern and set `UNITY_PROJECT_PATH` in the environment.
 
 ---
 
@@ -298,14 +316,22 @@ Replace both paths with your actual paths. Other MCP clients: same pattern; set 
 
 ---
 
-## Security
+## Integration with Unity Editor
 
-No game code, assets, or secrets in this repo. The Unity project path is supplied at runtime by your MCP client. Safe for public or private use. Maintained anonymously.
+- **Current workflow:** The AI runs inside your IDE (Cursor, VS Code with MCP, Claude Desktop, Windsurf, or another MCP-capable client). This server provides the AI with read-only access to your project (scenes, scripts, settings, and related assets). You run Unity Editor separately to open scenes, enter Play mode, and build. The AI uses the server to inspect the project and to suggest changes, answer questions, and assist with refactoring.
+
+- **Future compatibility:** This server implements the standard MCP protocol over stdio and requires a single environment variable (`UNITY_PROJECT_PATH`). If Unity Editor gains built-in MCP client support, you could connect it to this server using the same configuration: command `node`, arguments pointing to `dist/index.js`, and `UNITY_PROJECT_PATH` set in the environment. No changes to this codebase would be required.
 
 ---
 
-## More
+## Security
 
-- [**View on MCP Registry**](https://registry.modelcontextprotocol.io/?q=unity-mcp-server) — Find this server in the official registry  
-- [PURPOSE.md](./PURPOSE.md) — Why this server exists and when to use it  
-- Search: **Unity MCP server**, **MCP Unity**
+This repository does not include game code, assets, or secrets. The Unity project path is supplied at runtime by your MCP client. The server is suitable for public and private use.
+
+---
+
+## Documentation
+
+- [**MCP Registry**](https://registry.modelcontextprotocol.io/?q=unity-mcp-server) — Discover and install this server from the official registry.
+- [PURPOSE.md](./PURPOSE.md) — Purpose of this server and when to use it.
+- [docs/REGISTRY.md](./docs/REGISTRY.md) — How to publish and update the MCP Registry listing.

@@ -137,3 +137,58 @@ export function getBrokenScriptRefs(root: string): { assetPath: string; missingS
   }
   return broken;
 }
+
+/** Video clip assets (.mp4, .mov, .webm under Assets). */
+export function listVideoClips(root: string): string[] {
+  const exts = [".mp4", ".mov", ".webm", ".avi", ".asf"];
+  const out: string[] = [];
+  for (const ext of exts) {
+    out.push(...listFilesRecursive(root, ASSETS, { ext }));
+  }
+  return out.sort();
+}
+
+/** Legacy font assets (.fontsettings, .ttf, .otf) — excludes TMP which has list_tmp_fonts. */
+export function listLegacyFontAssets(root: string): string[] {
+  const fontsettings = listFilesRecursive(root, ASSETS, { ext: ".fontsettings" });
+  const ttf = listFilesRecursive(root, ASSETS, { ext: ".ttf" });
+  const otf = listFilesRecursive(root, ASSETS, { ext: ".otf" });
+  return [...new Set([...fontsettings, ...ttf, ...otf])].sort();
+}
+
+/** RenderTexture assets. */
+export function listRenderTextures(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".renderTexture" });
+}
+
+/** TerrainData and TerrainLayer .asset files (path or content hint). */
+export function listTerrainData(root: string): { path: string; kind: "TerrainData" | "TerrainLayer" }[] {
+  const assets = listFilesRecursive(root, ASSETS, { ext: ".asset" });
+  const out: { path: string; kind: "TerrainData" | "TerrainLayer" }[] = [];
+  for (const path of assets) {
+    const lower = path.toLowerCase();
+    if (lower.includes("terrain") && (lower.includes("layer") || lower.includes("data"))) {
+      const content = readFileSafe(root, path);
+      if (content?.includes("TerrainData")) out.push({ path, kind: "TerrainData" });
+      else if (content?.includes("TerrainLayer") || lower.includes("layer")) out.push({ path, kind: "TerrainLayer" });
+      else if (lower.includes("terrain") && !lower.includes("layer")) out.push({ path, kind: "TerrainData" });
+    }
+  }
+  if (out.length === 0) {
+    for (const path of assets) {
+      const content = readFileSafe(root, path);
+      if (content?.includes("TerrainData")) out.push({ path, kind: "TerrainData" });
+      else if (content?.includes("TerrainLayer")) out.push({ path, kind: "TerrainLayer" });
+    }
+  }
+  return out;
+}
+
+/** Lighting-related .asset files (LightingSettings, lightmap, etc.). */
+export function listLightingSettingsAssets(root: string): string[] {
+  const assets = listFilesRecursive(root, ASSETS, { ext: ".asset" });
+  return assets.filter((p) => {
+    const lower = p.toLowerCase();
+    return lower.includes("light") || lower.includes("lighting") || lower.includes("lightmap") || lower.includes("reflection");
+  });
+}

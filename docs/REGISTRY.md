@@ -1,11 +1,11 @@
-# How to register this server in the MCP Registry
+# Publishing to the MCP Registry
 
-The [MCP Registry](https://registry.modelcontextprotocol.io/) lists MCP servers so users can discover and install them. To list **Unity MCP Server** there, follow these steps.
+The [MCP Registry](https://registry.modelcontextprotocol.io/) lists MCP servers so users can discover and install them. To publish **Unity MCP Server** to the registry, follow the steps below.
 
 ## Prerequisites
 
 - **npm account** — [Sign up](https://www.npmjs.com/signup) if needed. The registry verifies ownership via the published npm package.
-- **GitHub account** — You’ll authenticate with GitHub so the registry can verify `io.github.rachitkumarrastogi/unity-mcp-server`.
+- **GitHub account** — Authentication with GitHub is required so the registry can verify `io.github.rachitkumarrastogi/unity-mcp-server`.
 
 ## Step 1: Publish the package to npm
 
@@ -45,13 +45,13 @@ mcp-publisher --help
 
 ## Step 3: Log in to the registry (GitHub)
 
-You must authenticate as the GitHub user that owns the repo (`rachitkumarrastogi`):
+Authenticate as the GitHub user that owns the repository:
 
 ```bash
 mcp-publisher login github
 ```
 
-Follow the prompts (open the URL, enter the code, authorize). When it says “Successfully logged in”, you’re done.
+Follow the prompts (open the URL, enter the code, authorize). When the CLI reports success, login is complete.
 
 ## Step 4: Publish to the MCP Registry
 
@@ -61,7 +61,7 @@ From the repo root (where `server.json` lives):
 mcp-publisher publish
 ```
 
-You should see something like:
+Expected output is similar to:
 
 ```text
 Publishing to https://registry.modelcontextprotocol.io...
@@ -69,18 +69,18 @@ Publishing to https://registry.modelcontextprotocol.io...
 ✓ Server io.github.rachitkumarrastogi/unity-mcp-server version 1.0.0
 ```
 
-## Step 5: Confirm it’s listed
+## Step 5: Confirm the listing
 
 - Browse [registry.modelcontextprotocol.io](https://registry.modelcontextprotocol.io/) and search for “Unity” or “unity-mcp-server”.
-- Or call the API:
+- Or query the API:
 
   ```bash
   curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=unity-mcp-server"
   ```
 
-## Updating the listing later
+## Updating the listing
 
-After you release a new version:
+After releasing a new version:
 
 1. Bump `version` in `package.json` and in `server.json` (top-level and `packages[0].version`).
 2. Run `npm run build` and `npm publish`.
@@ -91,7 +91,7 @@ After you release a new version:
 | Issue | What to do |
 |-------|------------|
 | “Registry validation failed for package” | Ensure `package.json` has `mcpName` exactly matching `server.json` → `name` (e.g. `io.github.rachitkumarrastogi/unity-mcp-server`). |
-| “You do not have permission to publish this server” | With GitHub login, the server `name` must start with `io.github.<your-github-username>/`. Use the same GitHub account that owns the repo. |
+| “You do not have permission to publish this server” | With GitHub login, the server `name` must start with `io.github.<your-github-username>/`. Use the GitHub account that owns the repository. |
 | “Invalid or expired Registry JWT token” | Run `mcp-publisher login github` again. |
 
 ## Official docs

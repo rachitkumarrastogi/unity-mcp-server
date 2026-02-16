@@ -155,6 +155,20 @@ async function main() {
     },
     async (args: unknown) => json(R.getSceneSummary(projectRoot, (args as { scene_path: string }).scene_path))
   );
+  server.registerTool(
+    "get_scene_components_by_type",
+    {
+      description: "Get GameObjects in a scene that have a given component type (e.g. Camera, Light).",
+      inputSchema: {
+        scene_path: z.string().describe("e.g. Assets/Scenes/Main.unity"),
+        component_type: z.string().describe("e.g. Camera, Light, Rigidbody"),
+      },
+    },
+    async (args: unknown) => {
+      const a = args as { scene_path: string; component_type: string };
+      return json(R.getSceneComponentsByType(projectRoot, a.scene_path, a.component_type));
+    }
+  );
 
   // --- 4. Prefabs ---
   server.registerTool(
@@ -165,6 +179,7 @@ async function main() {
     },
     async (args: unknown) => json(R.getPrefabs(projectRoot, (args as { path_prefix?: string })?.path_prefix))
   );
+  server.registerTool("list_prefab_variants", { description: "List prefabs that are variants of another prefab.", inputSchema: {} }, async () => json(R.listPrefabVariants(projectRoot)));
 
   // --- 5. Assets & references ---
   server.registerTool(
@@ -213,6 +228,11 @@ async function main() {
       return json(R.listAssetsByExtension(projectRoot, ext, a.folder));
     }
   );
+  server.registerTool("list_video_clips", { description: "List video clip assets (.mp4, .mov, .webm, .avi, .asf).", inputSchema: {} }, async () => json(R.listVideoClips(projectRoot)));
+  server.registerTool("list_legacy_font_assets", { description: "List legacy font assets (.fontsettings, .ttf, .otf) — not TMP.", inputSchema: {} }, async () => json(R.listLegacyFontAssets(projectRoot)));
+  server.registerTool("list_render_textures", { description: "List RenderTexture (.renderTexture) assets.", inputSchema: {} }, async () => json(R.listRenderTextures(projectRoot)));
+  server.registerTool("list_terrain_data", { description: "List TerrainData and TerrainLayer .asset files.", inputSchema: {} }, async () => json(R.listTerrainData(projectRoot)));
+  server.registerTool("list_lighting_settings_assets", { description: "List lighting-related .asset files (LightingSettings, lightmap, etc.).", inputSchema: {} }, async () => json(R.listLightingSettingsAssets(projectRoot)));
 
   // --- 6. Materials & shaders ---
   server.registerTool(
@@ -251,6 +271,8 @@ async function main() {
     },
     async (args: unknown) => json(R.getAnimatorStates(projectRoot, (args as { controller_path: string }).controller_path))
   );
+  server.registerTool("list_avatar_masks", { description: "List Avatar Mask (.mask) assets used by Animator.", inputSchema: {} }, async () => json(R.listAvatarMasks(projectRoot)));
+  server.registerTool("list_animator_override_controllers", { description: "List AnimatorOverrideController .controller assets.", inputSchema: {} }, async () => json(R.listAnimatorOverrideControllers(projectRoot)));
 
   // --- 8. Audio ---
   server.registerTool(
@@ -329,6 +351,16 @@ async function main() {
   // --- 16. Physics ---
   server.registerTool("get_physics_settings", { description: "Get Physics/DynamicsManager or Physics2D settings (key-value).", inputSchema: {} }, async () => json(R.getPhysicsSettings(projectRoot)));
 
+  // --- Project settings (audio, nav, XR, script order, VC, layer matrix, cloud) ---
+  server.registerTool("get_audio_settings", { description: "Get AudioManager.asset (global volume, reverb, DSP buffer).", inputSchema: {} }, async () => json(R.getAudioSettings(projectRoot)));
+  server.registerTool("get_navigation_settings", { description: "Get NavMesh/agent settings from ProjectSettings if present.", inputSchema: {} }, async () => json(R.getNavigationSettings(projectRoot)));
+  server.registerTool("get_xr_settings", { description: "Get XR/VR project settings (XRSettings.asset).", inputSchema: {} }, async () => json(R.getXrSettings(projectRoot)));
+  server.registerTool("get_script_execution_order", { description: "Get script execution order (MonoManager: script GUID and order).", inputSchema: {} }, async () => json(R.getScriptExecutionOrder(projectRoot)));
+  server.registerTool("get_version_control_settings", { description: "Get Unity version control settings (serialization mode, visible meta files).", inputSchema: {} }, async () => json(R.getVersionControlSettings(projectRoot)));
+  server.registerTool("get_layer_collision_matrix", { description: "Get layer collision matrix and layer names from TagManager/DynamicsManager.", inputSchema: {} }, async () => json(R.getLayerCollisionMatrix(projectRoot)));
+  server.registerTool("get_cloud_services_config", { description: "Get Unity Cloud / Unity Connect config if present.", inputSchema: {} }, async () => json(R.getCloudServicesConfig(projectRoot)));
+  server.registerTool("get_package_dependency_graph", { description: "Get package dependency graph (nodes and edges from manifest + lock).", inputSchema: {} }, async () => json(R.getPackageDependencyGraph(projectRoot)));
+
   // --- 17. Render pipelines ---
   server.registerTool("list_render_pipelines", { description: "List render pipeline assets and volume profiles (URP/HDRP).", inputSchema: {} }, async () => json(R.listRenderPipelines(projectRoot)));
 
@@ -338,6 +370,7 @@ async function main() {
   // --- 19. Sprites / 2D ---
   server.registerTool("list_sprite_atlases", { description: "List Sprite Atlas (.spriteatlas) assets.", inputSchema: {} }, async () => json(R.listSpriteAtlases(projectRoot)));
   server.registerTool("list_tilemap_assets", { description: "List tilemap-related .asset files.", inputSchema: {} }, async () => json(R.listTilemapAssets(projectRoot)));
+  server.registerTool("list_sprite_assets", { description: "List textures configured as sprites (spriteMode in .meta).", inputSchema: {} }, async () => json(R.listSpriteAssets(projectRoot)));
 
   // --- 20. Shader Graph / VFX ---
   server.registerTool("list_shader_graphs", { description: "List Shader Graph (.shadergraph) assets.", inputSchema: {} }, async () => json(R.listShaderGraphs(projectRoot)));

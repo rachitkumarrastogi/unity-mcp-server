@@ -1,0 +1,12 @@
+# Source and tooling (consumers only need dist/)
+src/
+*.ts
+tsconfig.json
+
+# Docs live in the repo for contributors; not needed in the published package
+docs/
+
+# Development and local config
+.env
+*.log
+.mcpregistry_*

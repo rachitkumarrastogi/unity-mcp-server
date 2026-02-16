@@ -51,3 +51,29 @@ export function getPrefabScriptGuids(root: string, prefabPath: string): string[]
 export function listSubscenes(root: string): string[] {
   return listFilesRecursive(root, ASSETS, { ext: ".subscene" });
 }
+
+/** GameObjects in a scene that have a given component type (e.g. Camera, Light). */
+export function getSceneComponentsByType(root: string, scenePath: string, componentType: string): { gameObjectName: string; componentType: string }[] {
+  const content = readFileSafe(root, scenePath);
+  if (!content) return [];
+  const out: { gameObjectName: string; componentType: string }[] = [];
+  const blocks = content.split(/---\s*(?=\d+:\s*\d+|!\w+)/);
+  const typeNorm = componentType.trim();
+  for (const block of blocks) {
+    const hasComponent = block.includes(`${typeNorm}:`) || (typeNorm === "Camera" && block.includes("Camera:")) || (typeNorm === "Light" && block.includes("Light:"));
+    if (!hasComponent) continue;
+    const nameMatch = block.match(/m_Name:\s*([^\n]+)/);
+    const goName = nameMatch?.[1]?.trim() ?? "?";
+    if (goName && goName !== "?") out.push({ gameObjectName: goName, componentType: typeNorm });
+  }
+  return out.slice(0, 100);
+}
+
+/** Prefabs that are variants (reference a parent prefab). */
+export function listPrefabVariants(root: string): string[] {
+  const prefabs = listFilesRecursive(root, ASSETS, { ext: ".prefab" });
+  return prefabs.filter((path) => {
+    const content = readFileSafe(root, path);
+    return (content?.includes("m_ParentPrefab:") && content?.includes("m_Modification")) ?? false;
+  });
+}

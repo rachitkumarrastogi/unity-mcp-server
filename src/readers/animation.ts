@@ -26,3 +26,17 @@ export function getAnimatorStates(root: string, controllerPath: string): string[
 export function listTimelinePlayables(root: string): string[] {
   return listFilesRecursive(root, ASSETS, { ext: ".playable" });
 }
+
+/** Avatar Mask assets (.mask used by Animator). */
+export function listAvatarMasks(root: string): string[] {
+  return listFilesRecursive(root, ASSETS, { ext: ".mask" });
+}
+
+/** Animator override controller assets (AnimatorOverrideController in YAML). */
+export function listAnimatorOverrideControllers(root: string): string[] {
+  const controllers = listFilesRecursive(root, ASSETS, { ext: ".controller" });
+  return controllers.filter((path) => {
+    const content = readFileSafe(root, path);
+    return content?.includes("AnimatorOverrideController") ?? false;
+  });
+}

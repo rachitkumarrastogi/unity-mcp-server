@@ -1,37 +1,37 @@
-# Why This MCP Server Exists and When It Makes Sense
+# Purpose and Use Cases
 
-## What it does
+## What this server does
 
-This server exposes **tools** that an MCP client (e.g. Cursor) can call when you’re working on **any Unity project**. Each tool does one thing:
+This server exposes **tools** that an MCP client (such as Cursor, Claude Desktop, or Windsurf) can call when you work on a Unity project. Each tool performs a single, well-defined operation. Examples:
 
-- **get_project_info** – Unity version, project path, how many scenes are in the build.
-- **list_build_scenes** – Full list of build scenes in order (from `EditorBuildSettings`).
-- **read_agent_docs** – Contents of `.agents/AGENT.md` (and optionally `REPO_UNDERSTANDING.md`).
+- **get_project_info** — Unity version, project path, and number of scenes in the build.
+- **list_build_scenes** — Ordered list of build scenes (from EditorBuildSettings).
+- **read_agent_docs** — Contents of `.agents/AGENT.md` and optionally `REPO_UNDERSTANDING.md`.
 
-So the agent (or you, via the agent) can ask “what’s the build order?” or “what’s in the agent guide?” without you opening files by hand. The client starts this process and calls these tools over stdio. **No Unity Editor is required** — it reads only from the project filesystem.
+The client starts this process and invokes these tools over stdio. **No Unity Editor is required** — the server reads only from the project filesystem.
 
-## Does it make sense to have it?
+## When to use it
 
-**Yes, if:**
+**Recommended when:**
 
-- You use an **MCP-aware IDE** (Cursor, Claude Desktop, Windsurf, etc.) and want the AI to have structured access to project metadata and agent docs.
-- You want the **Unity project repo to stay clean** (no Node/tooling inside it), and the **tooling to live in a separate repo** that you clone once and point at any Unity project via `UNITY_PROJECT_PATH`.
-- You’re building toward **more agent-facing tools** later (e.g. “list Addressables,” “run Unity CLI build,” “inspect scene list”) without bloating the game repo.
+- You use an MCP-capable IDE and want the AI to have structured access to project metadata and agent documentation.
+- You prefer to keep the Unity project repository free of Node or other tooling, with this server in a separate repository and pointed at any project via `UNITY_PROJECT_PATH`.
+- You plan to add more agent-facing tools (for example, listing Addressables, inspecting scenes, or validating references) without adding tooling into the game repository.
 
-**Optional / nice-to-have if:**
+**Optional when:**
 
-- You mostly work without MCP or without asking the AI about build order / agent docs. Then the server is optional; the game still works without it.
-- You’re fine opening `.agents/AGENT.md` and `ProjectSettings/EditorBuildSettings.asset` yourself. Then the server saves you a few clicks and gives the agent the same info in a structured way.
+- You occasionally use MCP or only sometimes need the AI to use build order or agent docs. The server remains optional; the game project works without it.
+- You are comfortable opening `.agents/AGENT.md` and `ProjectSettings/EditorBuildSettings.asset` manually; the server then provides the same information in a structured form and reduces manual steps.
 
-**Probably overkill if:**
+**Not necessary when:**
 
-- You never use MCP or an AI agent that can call tools. Then you don’t need this repo at all.
+- You do not use MCP or an AI agent that can call tools. In that case this server is not required.
 
-## What purpose it serves
+## Design goals
 
-1. **Structured project context for the agent** – The agent can ask “what scenes are in the build?” or “what’s the agent guide?” and get exact answers via tools instead of guessing or reading raw YAML/markdown without context.
-2. **Separation of concerns** – Game repo = Unity + game code. This repo = one small Node app that knows how to read that project. You can version and change the server without touching the Unity project.
-3. **Single place to add more tools** – When you want “trigger a build” or “list Addressables” or “validate scene refs,” you add a tool here and the consumer just points Cursor at the same server.
-4. **Reusability** – Same server works for **any** Unity project; switch projects by changing `UNITY_PROJECT_PATH` in the client config.
+1. **Structured project context for the agent** — The agent can query build order, agent documentation, and other project data via tools instead of parsing raw YAML or Markdown.
+2. **Separation of concerns** — The game repository contains Unity and game code; this repository is a separate Node application that knows how to read that project. The server can be versioned and updated independently of the Unity project.
+3. **Single place to extend tools** — New capabilities (for example, listing Addressables, validating scene references, or triggering builds) can be added here; consumers continue to point their MCP client at the same server.
+4. **Reusability** — The same server works for any Unity project; you switch projects by changing `UNITY_PROJECT_PATH` in the client configuration.
 
-In short: **it makes sense if you use MCP and want the AI to have reliable, structured access to project info and agent docs; it serves the purpose of a small, separate tool layer that sits next to any Unity project and exposes that context as MCP tools.**
+In summary: this server is intended for teams that use MCP and want the AI to have reliable, structured access to project information and agent documentation, without running or depending on the Unity Editor.

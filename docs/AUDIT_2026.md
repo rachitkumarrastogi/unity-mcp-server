@@ -1,6 +1,6 @@
-# Unity MCP Server – Audit (Feb 2026)
+# Audit (February 2026)
 
-This audit checks that the server covers what Unity developers need as of Feb 2026 (Unity 6, current packages, and common workflows). All tools are **filesystem-only**; no Unity Editor is required.
+This audit verifies that the server covers the needs of Unity developers as of February 2026 (Unity 6, current packages, and common workflows). All tools are filesystem-only; no Unity Editor is required.
 
 ---
 
