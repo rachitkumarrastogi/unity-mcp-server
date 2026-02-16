@@ -2,8 +2,9 @@
  * Project & build information readers.
  */
 
-import { readdirSync, statSync, existsSync } from "node:fs";
+import { readdirSync, statSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { homedir, platform } from "node:os";
 import { readJsonSafe, readFileSafe, parseUnityKeyValue, listFilesRecursive, ASSETS, PROJECT_SETTINGS, PACKAGES } from "./helpers.js";
 
 export interface PackageInfo {
@@ -285,4 +286,40 @@ export function listPackageSamples(root: string): { packagePath: string; sampleP
     }
   }
   return out.slice(0, 100);
+}
+
+/** List Unity projects from Unity Hub's projects list (if available). Paths are OS-specific. */
+export function listUnityHubProjects(): { path: string; name?: string; source: string }[] {
+  const home = homedir();
+  const out: { path: string; name?: string; source: string }[] = [];
+  const candidates: string[] = [];
+  if (platform() === "darwin") {
+    candidates.push(join(home, "Library", "Application Support", "Unity Hub", "projects-v1.json"));
+    candidates.push(join(home, "Library", "Application Support", "UnityHub", "projects-v1.json"));
+  } else if (platform() === "win32") {
+    const appData = process.env.APPDATA || process.env.USERPROFILE || home;
+    candidates.push(join(appData, "Unity Hub", "projects-v1.json"));
+    candidates.push(join(appData, "UnityHub", "projects-v1.json"));
+  } else {
+    candidates.push(join(home, ".config", "UnityHub", "projects-v1.json"));
+  }
+  for (const p of candidates) {
+    if (!existsSync(p)) continue;
+    try {
+      const raw = readFileSync(p, "utf-8");
+      const data = JSON.parse(raw) as unknown;
+      const list = Array.isArray(data) ? data : (data as { list?: unknown[] })?.list;
+      if (Array.isArray(list)) {
+        for (const item of list) {
+          const rec = item as { path?: string; name?: string; projectPath?: string };
+          const path = rec.path ?? rec.projectPath;
+          if (path && typeof path === "string") out.push({ path, name: rec.name, source: p });
+        }
+        break;
+      }
+    } catch {
+      /* skip */
+    }
+  }
+  return out;
 }

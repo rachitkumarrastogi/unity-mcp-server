@@ -7,3 +7,4 @@
 | [AUDIT_2026.md](./AUDIT_2026.md) | Audit (February 2026) — category coverage |
 | [TOOL_AUDIT_AND_SUGGESTIONS.md](./TOOL_AUDIT_AND_SUGGESTIONS.md) | Tool audit and suggestions |
 | [ROLE_BASED_GAP_ANALYSIS.md](./ROLE_BASED_GAP_ANALYSIS.md) | Role-based gap analysis (developers, designers, etc.) |
+| [COMPARISON_OTHER_PACKAGES_AND_TOOL_SUGGESTIONS.md](./COMPARISON_OTHER_PACKAGES_AND_TOOL_SUGGESTIONS.md) | Comparison with unity-mcp & @nurture-tech/unity-mcp-runner, dev search trends, suggested tools |

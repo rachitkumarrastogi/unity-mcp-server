@@ -98,3 +98,20 @@ export function getAssemblyForPath(root: string, assetPath: string): { assemblyN
   }
   return best;
 }
+
+/** Parse a C# script and return class name, base type, and public members (simple parse, no full AST). */
+export function getScriptPublicApi(root: string, scriptPath: string): { className: string; baseType?: string; publicMethods: string[]; publicFields: string[] } | null {
+  const content = readFileSafe(root, scriptPath);
+  if (!content) return null;
+  const className = content.match(/class\s+(\w+)/)?.[1] ?? content.match(/interface\s+(\w+)/)?.[1];
+  if (!className) return null;
+  const baseType = content.match(/:\s*(\w+(?:\.\w+)*)/)?.[1];
+  const publicMethods: string[] = [];
+  const publicFields: string[] = [];
+  const methodRe = /(?:public|internal)\s+(?:static\s+)?(?:virtual|override|async)?\s*(?:[\w<>,\s\[\]]+)\s+(\w+)\s*\(/g;
+  let m: RegExpExecArray | null;
+  while ((m = methodRe.exec(content)) !== null) publicMethods.push(m[1]);
+  const fieldRe = /(?:public|internal)\s+(?:static\s+)?(?:readonly\s+)?(?:const\s+)?(?:[\w<>,\s\[\]]+)\s+(\w+)\s*[;=]/g;
+  while ((m = fieldRe.exec(content)) !== null) publicFields.push(m[1]);
+  return { className, baseType, publicMethods: [...new Set(publicMethods)], publicFields: [...new Set(publicFields)] };
+}

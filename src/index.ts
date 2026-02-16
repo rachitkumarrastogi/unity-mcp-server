@@ -7,6 +7,7 @@
 import { resolve } from "node:path";
 import { z } from "zod";
 import * as R from "./readers/index.js";
+import { searchToolsCatalog } from "./tools-catalog.js";
 
 function getProjectRoot(): string {
   const env = process.env.UNITY_PROJECT_PATH;
@@ -293,6 +294,28 @@ async function main() {
     },
     async (args: unknown) => json(R.getTextureMeta(projectRoot, (args as { texture_path: string }).texture_path))
   );
+  server.registerTool(
+    "search_project",
+    {
+      description: "Combined search: by asset name pattern, script content pattern, and/or referrers of an asset path. Returns assets, scripts, and optionally referrers.",
+      inputSchema: {
+        name_pattern: z.string().optional().describe("e.g. Player or *Menu*"),
+        script_pattern: z.string().optional().describe("e.g. MonoBehaviour or GameManager"),
+        referrer_of_path: z.string().optional().describe("Asset path; returns assets that reference it"),
+        include_packages: z.boolean().optional().default(false),
+      },
+    },
+    async (args: unknown) => {
+      const a = args as { name_pattern?: string; script_pattern?: string; referrer_of_path?: string; include_packages?: boolean };
+      return json(R.searchProject(projectRoot, { namePattern: a.name_pattern, scriptPattern: a.script_pattern, referrerOfPath: a.referrer_of_path, includePackages: a.include_packages ?? false }));
+    }
+  );
+  server.registerTool(
+    "get_meta_for_asset",
+    { description: "Read .meta for any asset path (guid and key-value pairs).", inputSchema: { asset_path: z.string().describe("e.g. Assets/Models/Character.fbx") } },
+    async (args: unknown) => json(R.getMetaForAsset(projectRoot, (args as { asset_path: string }).asset_path))
+  );
+  server.registerTool("get_broken_asset_refs", { description: "List prefabs, scenes, materials with any missing GUID reference (not only scripts).", inputSchema: {} }, async () => json(R.getBrokenAssetRefs(projectRoot)));
 
   // --- 6. Materials & shaders ---
   server.registerTool(
@@ -421,6 +444,7 @@ async function main() {
   server.registerTool("get_cloud_services_config", { description: "Get Unity Cloud / Unity Connect config if present.", inputSchema: {} }, async () => json(R.getCloudServicesConfig(projectRoot)));
   server.registerTool("get_package_dependency_graph", { description: "Get package dependency graph (nodes and edges from manifest + lock).", inputSchema: {} }, async () => json(R.getPackageDependencyGraph(projectRoot)));
   server.registerTool("list_package_samples", { description: "List Samples folders or sample paths under Packages.", inputSchema: {} }, async () => json(R.listPackageSamples(projectRoot)));
+  server.registerTool("list_unity_hub_projects", { description: "List Unity projects from Unity Hub (projects-v1.json). Does not require UNITY_PROJECT_PATH.", inputSchema: {} }, async () => json(R.listUnityHubProjects()));
 
   // --- 17. Render pipelines ---
   server.registerTool("list_render_pipelines", { description: "List render pipeline assets and volume profiles (URP/HDRP).", inputSchema: {} }, async () => json(R.listRenderPipelines(projectRoot)));
@@ -525,6 +549,11 @@ async function main() {
   server.registerTool("get_time_settings", { description: "Get Time/Fixed timestep settings (TimeManager.asset).", inputSchema: {} }, async () => json(R.getTimeSettings(projectRoot)));
   server.registerTool("list_subscenes", { description: "List ECS/DOTS .subscene assets.", inputSchema: {} }, async () => json(R.listSubscenes(projectRoot)));
   server.registerTool("list_visual_scripting_assets", { description: "List Visual Scripting (Bolt/Unity) .asset files in Ludiq or com.unity.visualscripting.", inputSchema: {} }, async () => json(R.listVisualScriptingAssets(projectRoot)));
+  server.registerTool(
+    "get_script_public_api",
+    { description: "Parse a C# script and return class name, base type, public methods and fields (no Unity required).", inputSchema: { script_path: z.string().describe("e.g. Assets/Scripts/PlayerController.cs") } },
+    async (args: unknown) => json(R.getScriptPublicApi(projectRoot, (args as { script_path: string }).script_path))
+  );
   server.registerTool("get_build_target_info", { description: "Get active build target / platform from ProjectSettings.", inputSchema: {} }, async () => json(R.getBuildTargetInfo(projectRoot)));
   server.registerTool("get_feature_set_inference", { description: "Infer which Unity 6 feature sets (2D, ECS, AR, etc.) are used from package manifest.", inputSchema: {} }, async () => json(R.getFeatureSetInference(projectRoot)));
 
@@ -548,6 +577,16 @@ async function main() {
     async (args: unknown) => json(R.getPrefabDependencies(projectRoot, (args as { prefab_path: string }).prefab_path))
   );
   server.registerTool("get_release_readiness", { description: "One-shot release readiness: version, build scene count, packages, broken refs, assembly cycles, large assets.", inputSchema: {} }, async () => json(R.getReleaseReadiness(projectRoot)));
+
+  // --- Meta: tool discovery for AI ---
+  server.registerTool(
+    "search_tools",
+    {
+      description: "Find the most relevant tools by intent. Pass a query (e.g. find references, missing script, texture) to get matching tools with descriptions. Omit query to list all tools by category.",
+      inputSchema: { query: z.string().optional().describe("Optional search term to filter tools by name or description") },
+    },
+    async (args: unknown) => json(searchToolsCatalog((args as { query?: string })?.query))
+  );
 
   const transport = new StdioServerTransport();
   await server.connect(transport);

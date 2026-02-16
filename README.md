@@ -49,7 +49,7 @@ Expand a category below to see the tools it includes.
 | [🎨 Materials & shaders](#materials-shaders) | [🎞️ Animation](#animation) | [🖼️ 2D & sprites](#2d-sprites) | [✨ Rendering](#rendering) |
 | [📝 TextMeshPro & UI](#textmeshpro-ui) | [🎮 Input](#input) | [🏷️ Tags & layers](#tags-layers) | [🌐 Addressables & localization](#addressables-localization) |
 | [🔊 Audio](#audio) | [🧪 Testing & docs](#testing-docs) | [🔄 CI & version control](#ci-version-control) | [🔌 Integrations](#integrations) |
-| [⚡ Speed & productivity](#speed) | | | |
+| [⚡ Speed & productivity](#speed) | [🔍 Meta](#meta) | | |
 
 ---
 
@@ -80,6 +80,7 @@ Expand a category below to see the tools it includes.
 | `get_cloud_services_config` | Unity Cloud / Unity Connect config |
 | `get_package_dependency_graph` | Package dependency graph (manifest + lock) |
 | `list_package_samples` | Samples folders under Packages |
+| `list_unity_hub_projects` | List Unity projects from Unity Hub (no project path required) |
 
 </details>
 
@@ -95,6 +96,7 @@ Expand a category below to see the tools it includes.
 | `get_assembly_dependency_graph` | Nodes and edges |
 | `list_editor_scripts` | Scripts in Editor folders |
 | `list_visual_scripting_assets` | Bolt / Unity Visual Scripting .asset files |
+| `get_script_public_api` | Parse C# script: class name, base type, public methods/fields |
 
 </details>
 
@@ -132,6 +134,9 @@ Expand a category below to see the tools it includes.
 | `list_lighting_settings_assets` | Lighting-related .asset files |
 | `search_assets_by_name` | Search Assets (and optionally Packages) by name pattern |
 | `get_texture_meta` | Texture .meta (maxSize, dimensions, spriteMode, PPU) |
+| `search_project` | Combined search: name pattern, script pattern, and/or referrers of path |
+| `get_meta_for_asset` | Read .meta for any asset path (guid, importer keys) |
+| `get_broken_asset_refs` | Prefabs/scenes/materials with any missing GUID reference |
 
 </details>
 
@@ -287,6 +292,15 @@ Expand a category below to see the tools it includes.
 | `get_broken_script_refs` | Prefabs/scenes with missing script refs |
 | `get_prefab_dependencies` | Asset paths referenced by a prefab (impact analysis) |
 | `get_release_readiness` | One-shot: version, build scenes, packages, broken refs, cycles, large assets |
+
+</details>
+
+<details id="meta">
+<summary><strong>🔍 Meta</strong></summary>
+
+| Tool | Description |
+|------|-------------|
+| `search_tools` | Find relevant tools by intent (e.g. find references, missing script). Omit query to list all tools by category. |
 
 </details>
 

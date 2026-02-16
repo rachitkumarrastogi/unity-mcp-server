@@ -4,7 +4,8 @@
 
 import { existsSync, readdirSync, statSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { listFilesRecursive, readFileSafe, getAssetPathByGuid, ASSETS } from "./helpers.js";
+import { listFilesRecursive, readFileSafe, getAssetPathByGuid, getGuidFromMeta, findReferencesToGuid, ASSETS } from "./helpers.js";
+import { findScriptsByContent } from "./code.js";
 
 export function getAssetFolderTree(root: string, maxDepth: number = 4): Record<string, string[]> {
   const assetsDir = join(root, ASSETS);
@@ -245,4 +246,76 @@ export function getTextureMeta(root: string, texturePath: string): Record<string
   const mPpu = content.match(/spritePixelsToUnits:\s*([\d.]+)/);
   if (mPpu) out.spritePixelsToUnits = parseFloat(mPpu[1]);
   return Object.keys(out).length ? out : null;
+}
+
+/** Get .meta key-value for any asset path (guid, importer type, and common keys). */
+export function getMetaForAsset(root: string, assetPath: string): Record<string, string> | null {
+  const metaPath = assetPath.endsWith(".meta") ? assetPath : assetPath + ".meta";
+  const content = readFileSafe(root, metaPath);
+  if (!content) return null;
+  const out: Record<string, string> = {};
+  const mGuid = content.match(/^guid:\s*([a-f0-9]{32})/m);
+  if (mGuid) out.guid = mGuid[1];
+  const lines = content.split("\n");
+  for (const line of lines) {
+    const simple = /^(\w+):\s*(.+)$/.exec(line.trim());
+    if (simple && !simple[2].startsWith("{") && !simple[2].startsWith("[")) out[simple[1]] = simple[2].trim();
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+/** Combined search: by asset name, script content, and optionally referrers of a path. */
+export function searchProject(
+  root: string,
+  opts: { namePattern?: string; scriptPattern?: string; referrerOfPath?: string; includePackages?: boolean }
+): { assets: string[]; scripts: string[]; referrers?: string[] } {
+  const assets: string[] = [];
+  const scripts: string[] = [];
+  if (opts.namePattern) assets.push(...searchAssetsByName(root, opts.namePattern, opts.includePackages ?? false));
+  if (opts.scriptPattern) scripts.push(...findScriptsByContent(root, opts.scriptPattern));
+  let referrers: string[] | undefined;
+  if (opts.referrerOfPath) {
+    const guid = getGuidFromMeta(root, opts.referrerOfPath);
+    if (guid) referrers = findReferencesToGuid(root, guid);
+  }
+  return { assets, scripts, referrers };
+}
+
+/** List prefabs/scenes/materials that reference a GUID that does not exist in the project (any missing ref, not only script). */
+export function getBrokenAssetRefs(root: string): { assetPath: string; missingGuid: string }[] {
+  const validGuids = new Set<string>();
+  const stack: string[] = [ASSETS];
+  const fullRoot = join(root, ASSETS);
+  if (!existsSync(fullRoot)) return [];
+  while (stack.length) {
+    const d = stack.pop()!;
+    const fullD = join(root, d);
+    try {
+      for (const e of readdirSync(fullD)) {
+        const rel = join(d, e);
+        const fullPath = join(root, rel);
+        if (statSync(fullPath).isDirectory()) {
+          if (!e.startsWith(".")) stack.push(rel);
+        } else if (e.endsWith(".meta")) {
+          const content = readFileSync(fullPath, "utf-8");
+          const m = content.match(/^guid:\s*([a-f0-9]{32})/m);
+          if (m) validGuids.add(m[1]);
+        }
+      }
+    } catch {
+      /* */
+    }
+  }
+  const broken: { assetPath: string; missingGuid: string }[] = [];
+  const exts = [".prefab", ".unity", ".mat", ".asset", ".controller", ".anim", ".overrideController"];
+  for (const rel of listFilesRecursive(root, ASSETS).filter((p) => exts.some((x) => p.endsWith(x)))) {
+    const content = readFileSafe(root, rel);
+    if (!content) continue;
+    const guidRe = /guid:\s*([a-f0-9]{32})/g;
+    let m: RegExpExecArray | null;
+    while ((m = guidRe.exec(content)) !== null) {
+      if (!validGuids.has(m[1])) broken.push({ assetPath: rel, missingGuid: m[1] });
+    }
+  }
+  return broken;
 }

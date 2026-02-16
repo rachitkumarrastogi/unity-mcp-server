@@ -7,3 +7,5 @@
 | [**reference/**](./reference/README.md) | Registry, comparison, audits, gap analysis |
 
 The main [README](../README.md) in the repo root links to all of these.
+
+**Maintenance:** Prefer updating existing docs over adding new MD files so the tree stays meaningful.
