@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-02-16
+
+### Added
+
+- 18 new tools: `get_audio_settings`, `get_navigation_settings`, `get_xr_settings`, `get_script_execution_order`, `get_version_control_settings`, `get_layer_collision_matrix`, `get_cloud_services_config`, `get_package_dependency_graph`, `list_video_clips`, `list_legacy_font_assets`, `list_render_textures`, `list_terrain_data`, `list_lighting_settings_assets`, `list_sprite_assets`, `get_scene_components_by_type`, `list_prefab_variants`, `list_avatar_masks`, `list_animator_override_controllers` (93 tools total).
+- PUBLISH.md with npm and MCP Registry publish steps.
+- .npmignore (exclude docs/ and src/ from npm package).
+
+### Changed
+
+- Documentation updated for npm/MCP registry: README, PURPOSE.md, docs (Integration with Unity Editor, professional tone).
+
+---
+
 ## [1.4.0] - 2025-02-15
 
 ### Changed
@@ -45,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release: Unity MCP server (project info, build scenes, agent docs).
 
+[1.5.0]: https://github.com/rachitkumarrastogi/unity-mcp-server/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/rachitkumarrastogi/unity-mcp-server/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/rachitkumarrastogi/unity-mcp-server/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/rachitkumarrastogi/unity-mcp-server/compare/v1.1.0...v1.2.0
