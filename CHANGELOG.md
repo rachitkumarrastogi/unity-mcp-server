@@ -9,13 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- 18 new tools: `get_audio_settings`, `get_navigation_settings`, `get_xr_settings`, `get_script_execution_order`, `get_version_control_settings`, `get_layer_collision_matrix`, `get_cloud_services_config`, `get_package_dependency_graph`, `list_video_clips`, `list_legacy_font_assets`, `list_render_textures`, `list_terrain_data`, `list_lighting_settings_assets`, `list_sprite_assets`, `get_scene_components_by_type`, `list_prefab_variants`, `list_avatar_masks`, `list_animator_override_controllers` (93 tools total).
-- PUBLISH.md with npm and MCP Registry publish steps.
+- **101 tools total.** New in this release:
+  - **Project & build:** `get_audio_settings`, `get_navigation_settings`, `get_xr_settings`, `get_script_execution_order`, `get_version_control_settings`, `get_layer_collision_matrix`, `get_cloud_services_config`, `get_package_dependency_graph`, `list_package_samples`.
+  - **Code & assemblies:** `get_assembly_for_path`.
+  - **Scenes & prefabs:** `get_scene_components_by_type`, `get_scene_objects_by_tag`, `get_all_components_by_type`, `list_prefab_variants`, `list_prefabs_with_component`.
+  - **Assets & references:** `list_video_clips`, `list_legacy_font_assets`, `list_render_textures`, `list_terrain_data`, `list_lighting_settings_assets`, `search_assets_by_name`, `get_texture_meta`.
+  - **Animation:** `list_avatar_masks`, `list_animator_override_controllers`.
+  - **2D:** `list_sprite_assets`.
+  - **Speed & productivity:** `get_release_readiness`.
+- docs/PUBLISH.md, docs/PURPOSE.md (publish and purpose docs in docs/).
 - .npmignore (exclude docs/ and src/ from npm package).
+- docs/HOW_IT_HELPS_UNITY_DEVELOPERS.md, docs/ROLE_BASED_GAP_ANALYSIS.md.
+- README: Supported IDEs and clients (Cursor, Claude Desktop, VS Code, Windsurf, etc.).
 
 ### Changed
 
-- Documentation updated for npm/MCP registry: README, PURPOSE.md, docs (Integration with Unity Editor, professional tone).
+- Documentation updated for npm/MCP registry: README, PURPOSE, docs (Integration with Unity Editor, professional tone).
+- PURPOSE.md and PUBLISH.md moved to docs/.
 
 ---
 
