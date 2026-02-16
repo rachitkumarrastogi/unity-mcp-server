@@ -6,8 +6,8 @@ import { listScripts, getAssemblyDefinitions, getAssemblyDependencyGraph } from 
 import { getPrefabs, getAllScenes } from "./scenes.js";
 import { getMaterials } from "./materials.js";
 import { getAnimatorControllers, getAnimationClips } from "./animation.js";
-import { getPackages } from "./project.js";
-import { getSceneReferencedAssets, getBrokenScriptRefs, getPrefabDependencies } from "./assets.js";
+import { getPackages, getBuildScenes, getProjectVersion } from "./project.js";
+import { getSceneReferencedAssets, getBrokenScriptRefs, getPrefabDependencies, listLargeAssets } from "./assets.js";
 import { readFileSafe } from "./helpers.js";
 
 /** Project stats in one call (script count, prefab count, etc.). */
@@ -73,4 +73,28 @@ export function findScriptReferences(root: string, typeOrClassName: string): str
     if (content && re.test(content)) out.push(rel);
   }
   return out;
+}
+
+/** One-shot release readiness: version, build scenes, packages, broken refs, assembly cycles, large assets. */
+export function getReleaseReadiness(root: string): {
+  version: string;
+  buildSceneCount: number;
+  packageCount: number;
+  brokenScriptRefCount: number;
+  hasAssemblyCycles: boolean;
+  largeAssetCount: number;
+} {
+  const buildScenes = getBuildScenes(root);
+  const packages = getPackages(root);
+  const broken = getBrokenScriptRefs(root);
+  const cycles = detectAssemblyCycles(root);
+  const large = listLargeAssets(root, 5);
+  return {
+    version: getProjectVersion(root),
+    buildSceneCount: buildScenes.length,
+    packageCount: packages.dependencies.length,
+    brokenScriptRefCount: broken.length,
+    hasAssemblyCycles: cycles.length > 0,
+    largeAssetCount: large.length,
+  };
 }

@@ -2,6 +2,8 @@
  * Project & build information readers.
  */
 
+import { readdirSync, statSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import { readJsonSafe, readFileSafe, parseUnityKeyValue, listFilesRecursive, ASSETS, PROJECT_SETTINGS, PACKAGES } from "./helpers.js";
 
 export interface PackageInfo {
@@ -255,4 +257,32 @@ export function getPackageDependencyGraph(root: string): { nodes: { id: string; 
     }
   }
   return { nodes, edges };
+}
+
+/** List Samples folders or sample paths under Packages (Unity package samples). */
+export function listPackageSamples(root: string): { packagePath: string; samplePath: string }[] {
+  const out: { packagePath: string; samplePath: string }[] = [];
+  const packagesDir = join(root, PACKAGES);
+  if (!existsSync(packagesDir)) return out;
+  for (const e of readdirSync(packagesDir)) {
+    if (e.startsWith(".")) continue;
+    const pkgPath = join(PACKAGES, e);
+    const fullPkg = join(root, pkgPath);
+    if (!statSync(fullPkg).isDirectory()) continue;
+    const samplesDir = join(fullPkg, "Samples~");
+    const samplesDirAlt = join(fullPkg, "Samples");
+    if (existsSync(samplesDir) && statSync(samplesDir).isDirectory()) {
+      for (const s of readdirSync(samplesDir)) {
+        const samplePath = join(pkgPath, "Samples~", s);
+        if (statSync(join(root, samplePath)).isDirectory()) out.push({ packagePath: pkgPath, samplePath });
+      }
+    }
+    if (existsSync(samplesDirAlt) && statSync(samplesDirAlt).isDirectory()) {
+      for (const s of readdirSync(samplesDirAlt)) {
+        const samplePath = join(pkgPath, "Samples", s);
+        if (statSync(join(root, samplePath)).isDirectory()) out.push({ packagePath: pkgPath, samplePath });
+      }
+    }
+  }
+  return out.slice(0, 100);
 }

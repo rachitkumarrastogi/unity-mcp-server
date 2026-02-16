@@ -1,6 +1,6 @@
 # Unity MCP Server
 
-**MCP server for Unity** — Gives AI assistants (Cursor, Claude Desktop, etc.) structured access to your Unity project. No Unity Editor required.
+**MCP server for Unity** — Gives AI assistants structured access to your Unity project from any MCP-capable IDE or app. No Unity Editor required.
 
 [![npm version](https://img.shields.io/npm/v/unity-mcp-server.svg)](https://www.npmjs.com/package/unity-mcp-server) [![MCP Registry](https://img.shields.io/badge/MCP_Registry-View_this_server-6e7681?style=flat-square&labelColor=24292f)](https://registry.modelcontextprotocol.io/?q=unity-mcp-server)
 
@@ -16,7 +16,26 @@ Your IDE talks to this server; the server reads your Unity project folder and an
 
 - **Editor-free** — Reads only from the project filesystem.
 - **One server, many projects** — Set `UNITY_PROJECT_PATH` per project in your MCP config.
-- **MCP-native** — Works with any MCP client (Cursor, Claude Desktop, Windsurf).
+- **MCP-native** — Works with any client that supports the [Model Context Protocol](https://modelcontextprotocol.io/) (tools over stdio).
+
+---
+
+## Supported IDEs and clients
+
+This server uses the standard **MCP protocol over stdio** and exposes **tools**. Any IDE or app that can run an MCP server and pass environment variables will work. Commonly used clients include:
+
+| Client | Notes |
+|--------|--------|
+| **Cursor** | Add server to MCP settings; set `UNITY_PROJECT_PATH` in `env`. |
+| **Claude Desktop** | Add to `claude_desktop_config.json`; same command + env pattern. |
+| **Claude Code** | MCP support including tools. |
+| **VS Code** | Use an MCP extension (e.g. GenAI / Copilot MCP); configure server and `UNITY_PROJECT_PATH`. |
+| **Windsurf** | Add MCP server with command and env. |
+| **Continue** | Configure MCP server in Continue settings. |
+| **Cline** | MCP tools and resources. |
+| **Other** | Any client that supports MCP tools over stdio (e.g. Zed, Roo Code, LibreChat, custom agents). |
+
+Configuration is the same everywhere: **command** = `node`, **args** = path to `dist/index.js`, **env** = `UNITY_PROJECT_PATH` = your Unity project root. See [Configuration](#configuration-cursor) below for a Cursor example; other clients use the same structure in their own config format.
 
 ---
 
@@ -60,6 +79,7 @@ Expand a category below to see the tools it includes.
 | `get_layer_collision_matrix` | Layer collision matrix and layer names |
 | `get_cloud_services_config` | Unity Cloud / Unity Connect config |
 | `get_package_dependency_graph` | Package dependency graph (manifest + lock) |
+| `list_package_samples` | Samples folders under Packages |
 
 </details>
 
@@ -69,6 +89,7 @@ Expand a category below to see the tools it includes.
 | Tool | Description |
 |------|-------------|
 | `list_assemblies` | Assembly definitions with references, platforms |
+| `get_assembly_for_path` | Assembly that contains a given script or folder path |
 | `list_scripts` | C# scripts (optional folder filter) |
 | `find_scripts_by_content` | By type/pattern (e.g. MonoBehaviour) |
 | `get_assembly_dependency_graph` | Nodes and edges |
@@ -85,8 +106,11 @@ Expand a category below to see the tools it includes.
 | `list_all_scenes` | All .unity files under Assets |
 | `get_scene_summary` | Root GameObjects, component count |
 | `get_scene_components_by_type` | GameObjects in a scene with a component type (e.g. Camera, Light) |
+| `get_scene_objects_by_tag` | GameObjects in a scene with a given tag (e.g. Spawn) |
+| `get_all_components_by_type` | All Cameras/Lights/etc. across all scenes |
 | `list_prefabs` | Prefabs (optional path prefix) |
 | `list_prefab_variants` | Prefabs that are variants of another prefab |
+| `list_prefabs_with_component` | Prefabs that contain a component type (e.g. Animator) |
 | `get_prefab_script_guids` | Script GUIDs used by a prefab |
 | `list_subscenes` | ECS/DOTS .subscene assets |
 
@@ -106,6 +130,8 @@ Expand a category below to see the tools it includes.
 | `list_render_textures` | RenderTexture assets |
 | `list_terrain_data` | TerrainData and TerrainLayer assets |
 | `list_lighting_settings_assets` | Lighting-related .asset files |
+| `search_assets_by_name` | Search Assets (and optionally Packages) by name pattern |
+| `get_texture_meta` | Texture .meta (maxSize, dimensions, spriteMode, PPU) |
 
 </details>
 
@@ -260,6 +286,7 @@ Expand a category below to see the tools it includes.
 | `find_script_references` | C# files that reference a type/class name (refactoring) |
 | `get_broken_script_refs` | Prefabs/scenes with missing script refs |
 | `get_prefab_dependencies` | Asset paths referenced by a prefab (impact analysis) |
+| `get_release_readiness` | One-shot: version, build scenes, packages, broken refs, cycles, large assets |
 
 </details>
 
@@ -287,9 +314,9 @@ The server uses **stdio**; your MCP client starts it automatically.
 
 ---
 
-## Configuration (Cursor)
+## Configuration
 
-Add to your MCP settings:
+Example for **Cursor** (same idea for Claude Desktop, VS Code + MCP, Windsurf, etc.):
 
 ```json
 {
@@ -305,7 +332,7 @@ Add to your MCP settings:
 }
 ```
 
-Replace the paths with your actual paths. For other MCP clients, use the same pattern and set `UNITY_PROJECT_PATH` in the environment.
+Replace the paths with your actual paths. For **Claude Desktop**, add an entry under `mcpServers` in `claude_desktop_config.json` with the same `command`, `args`, and `env`. For **VS Code**, use your MCP extension’s config to add the server and `UNITY_PROJECT_PATH`. Other clients follow the same pattern in their own config files.
 
 ---
 
@@ -333,5 +360,5 @@ This repository does not include game code, assets, or secrets. The Unity projec
 ## Documentation
 
 - [**MCP Registry**](https://registry.modelcontextprotocol.io/?q=unity-mcp-server) — Discover and install this server from the official registry.
-- [PURPOSE.md](./PURPOSE.md) — Purpose of this server and when to use it.
-- [docs/REGISTRY.md](./docs/REGISTRY.md) — How to publish and update the MCP Registry listing.
+- [Purpose and use cases](./docs/PURPOSE.md)
+- [Publish to npm and MCP Registry](./docs/PUBLISH.md) · [Registry details](./docs/REGISTRY.md)

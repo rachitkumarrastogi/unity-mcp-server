@@ -77,3 +77,42 @@ export function listPrefabVariants(root: string): string[] {
     return (content?.includes("m_ParentPrefab:") && content?.includes("m_Modification")) ?? false;
   });
 }
+
+/** GameObjects in a scene that have a given tag (e.g. Spawn, Respawn). */
+export function getSceneObjectsByTag(root: string, scenePath: string, tagName: string): { gameObjectName: string; tag: string }[] {
+  const content = readFileSafe(root, scenePath);
+  if (!content) return [];
+  const out: { gameObjectName: string; tag: string }[] = [];
+  const tagNorm = tagName.trim();
+  const blocks = content.split(/---\s*(?=\d+:\s*\d+|!\w+)/);
+  for (const block of blocks) {
+    const tagMatch = block.match(/m_Tag:\s*([^\n]+)/);
+    if (!tagMatch || tagMatch[1].trim() !== tagNorm) continue;
+    const nameMatch = block.match(/m_Name:\s*([^\n]+)/);
+    const goName = nameMatch?.[1]?.trim() ?? "?";
+    if (goName && goName !== "?") out.push({ gameObjectName: goName, tag: tagNorm });
+  }
+  return out.slice(0, 200);
+}
+
+/** All occurrences of a component type across all scenes (scene path + GameObject name). */
+export function getAllComponentsByType(root: string, componentType: string): { scenePath: string; gameObjectName: string; componentType: string }[] {
+  const scenes = getAllScenes(root);
+  const out: { scenePath: string; gameObjectName: string; componentType: string }[] = [];
+  const typeNorm = componentType.trim();
+  for (const scenePath of scenes) {
+    const items = getSceneComponentsByType(root, scenePath, typeNorm);
+    for (const item of items) out.push({ scenePath, gameObjectName: item.gameObjectName, componentType: typeNorm });
+  }
+  return out.slice(0, 300);
+}
+
+/** Prefabs that contain a given component type (e.g. Animator, Rigidbody). */
+export function listPrefabsWithComponent(root: string, componentType: string): string[] {
+  const prefabs = listFilesRecursive(root, ASSETS, { ext: ".prefab" });
+  const typeNorm = componentType.trim();
+  return prefabs.filter((path) => {
+    const content = readFileSafe(root, path);
+    return content?.includes(`${typeNorm}:`) ?? false;
+  });
+}

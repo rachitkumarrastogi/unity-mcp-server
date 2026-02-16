@@ -192,3 +192,57 @@ export function listLightingSettingsAssets(root: string): string[] {
     return lower.includes("light") || lower.includes("lighting") || lower.includes("lightmap") || lower.includes("reflection");
   });
 }
+
+/** Search Assets (and optionally Packages) by file or folder name pattern (e.g. "Player", "*Menu*"). */
+export function searchAssetsByName(root: string, namePattern: string, includePackages?: boolean): string[] {
+  const pattern = namePattern.replace(/\*/g, ".*").toLowerCase();
+  const re = new RegExp(pattern, "i");
+  const out: string[] = [];
+  const dirs = includePackages ? [ASSETS, "Packages"] : [ASSETS];
+  for (const dir of dirs) {
+    const full = join(root, dir);
+    if (!existsSync(full) || !statSync(full).isDirectory()) continue;
+    const stack: string[] = [dir];
+    while (stack.length) {
+      const d = stack.pop()!;
+      const fullD = join(root, d);
+      try {
+        for (const e of readdirSync(fullD)) {
+          const rel = join(d, e);
+          const fullPath = join(root, rel);
+          if (statSync(fullPath).isDirectory()) {
+            if (!e.startsWith(".") && e !== "node_modules") stack.push(rel);
+            if (re.test(e)) out.push(rel + "/");
+          } else {
+            const nameWithoutMeta = e.endsWith(".meta") ? e.slice(0, -5) : e;
+            if (re.test(nameWithoutMeta) || re.test(rel)) out.push(rel);
+          }
+        }
+      } catch {
+        /* */
+      }
+    }
+  }
+  return [...new Set(out)].sort().slice(0, 500);
+}
+
+/** Get texture .meta info (maxSize, width/height if present, spriteMode, spritePixelsToUnits). */
+export function getTextureMeta(root: string, texturePath: string): Record<string, string | number> | null {
+  const metaPath = texturePath.endsWith(".meta") ? texturePath : texturePath + ".meta";
+  const content = readFileSafe(root, metaPath);
+  if (!content) return null;
+  const out: Record<string, string | number> = {};
+  const mGuid = content.match(/^guid:\s*([a-f0-9]{32})/m);
+  if (mGuid) out.guid = mGuid[1];
+  const mMax = content.match(/maxTextureSize:\s*(\d+)/);
+  if (mMax) out.maxTextureSize = parseInt(mMax[1], 10);
+  const mW = content.match(/m_Width:\s*(\d+)/);
+  if (mW) out.width = parseInt(mW[1], 10);
+  const mH = content.match(/m_Height:\s*(\d+)/);
+  if (mH) out.height = parseInt(mH[1], 10);
+  const mSprite = content.match(/spriteMode:\s*(\d+)/);
+  if (mSprite) out.spriteMode = parseInt(mSprite[1], 10);
+  const mPpu = content.match(/spritePixelsToUnits:\s*([\d.]+)/);
+  if (mPpu) out.spritePixelsToUnits = parseFloat(mPpu[1]);
+  return Object.keys(out).length ? out : null;
+}

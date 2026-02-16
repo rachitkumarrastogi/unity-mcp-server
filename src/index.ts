@@ -113,6 +113,14 @@ async function main() {
     },
     async () => json(R.getAssemblyDefinitions(projectRoot))
   );
+  server.registerTool(
+    "get_assembly_for_path",
+    {
+      description: "Get the assembly (asmdef name and path) that contains the given asset path (script or folder).",
+      inputSchema: { asset_path: z.string().describe("e.g. Assets/Scripts/Player.cs or Assets/Scripts") },
+    },
+    async (args: unknown) => json(R.getAssemblyForPath(projectRoot, (args as { asset_path: string }).asset_path))
+  );
 
   server.registerTool(
     "list_scripts",
@@ -169,6 +177,28 @@ async function main() {
       return json(R.getSceneComponentsByType(projectRoot, a.scene_path, a.component_type));
     }
   );
+  server.registerTool(
+    "get_scene_objects_by_tag",
+    {
+      description: "Get GameObjects in a scene that have a given tag (e.g. Spawn, Respawn).",
+      inputSchema: {
+        scene_path: z.string().describe("e.g. Assets/Scenes/Main.unity"),
+        tag_name: z.string().describe("Tag name, e.g. Spawn"),
+      },
+    },
+    async (args: unknown) => {
+      const a = args as { scene_path: string; tag_name: string };
+      return json(R.getSceneObjectsByTag(projectRoot, a.scene_path, a.tag_name));
+    }
+  );
+  server.registerTool(
+    "get_all_components_by_type",
+    {
+      description: "Get all occurrences of a component type across all scenes (scene path + GameObject name).",
+      inputSchema: { component_type: z.string().describe("e.g. Camera, Light") },
+    },
+    async (args: unknown) => json(R.getAllComponentsByType(projectRoot, (args as { component_type: string }).component_type))
+  );
 
   // --- 4. Prefabs ---
   server.registerTool(
@@ -180,6 +210,14 @@ async function main() {
     async (args: unknown) => json(R.getPrefabs(projectRoot, (args as { path_prefix?: string })?.path_prefix))
   );
   server.registerTool("list_prefab_variants", { description: "List prefabs that are variants of another prefab.", inputSchema: {} }, async () => json(R.listPrefabVariants(projectRoot)));
+  server.registerTool(
+    "list_prefabs_with_component",
+    {
+      description: "List prefabs that contain a given component type (e.g. Animator, Rigidbody).",
+      inputSchema: { component_type: z.string().describe("e.g. Animator, Rigidbody") },
+    },
+    async (args: unknown) => json(R.listPrefabsWithComponent(projectRoot, (args as { component_type: string }).component_type))
+  );
 
   // --- 5. Assets & references ---
   server.registerTool(
@@ -233,6 +271,28 @@ async function main() {
   server.registerTool("list_render_textures", { description: "List RenderTexture (.renderTexture) assets.", inputSchema: {} }, async () => json(R.listRenderTextures(projectRoot)));
   server.registerTool("list_terrain_data", { description: "List TerrainData and TerrainLayer .asset files.", inputSchema: {} }, async () => json(R.listTerrainData(projectRoot)));
   server.registerTool("list_lighting_settings_assets", { description: "List lighting-related .asset files (LightingSettings, lightmap, etc.).", inputSchema: {} }, async () => json(R.listLightingSettingsAssets(projectRoot)));
+  server.registerTool(
+    "search_assets_by_name",
+    {
+      description: "Search Assets (and optionally Packages) by file or folder name pattern (e.g. Player, *Menu*).",
+      inputSchema: {
+        name_pattern: z.string().describe("Pattern to match; use * as wildcard"),
+        include_packages: z.boolean().optional().describe("If true, also search Packages").default(false),
+      },
+    },
+    async (args: unknown) => {
+      const a = args as { name_pattern: string; include_packages?: boolean };
+      return json(R.searchAssetsByName(projectRoot, a.name_pattern, a.include_packages));
+    }
+  );
+  server.registerTool(
+    "get_texture_meta",
+    {
+      description: "Get texture .meta info (maxTextureSize, width/height, spriteMode, spritePixelsToUnits) for a texture path.",
+      inputSchema: { texture_path: z.string().describe("e.g. Assets/Textures/Icon.png") },
+    },
+    async (args: unknown) => json(R.getTextureMeta(projectRoot, (args as { texture_path: string }).texture_path))
+  );
 
   // --- 6. Materials & shaders ---
   server.registerTool(
@@ -360,6 +420,7 @@ async function main() {
   server.registerTool("get_layer_collision_matrix", { description: "Get layer collision matrix and layer names from TagManager/DynamicsManager.", inputSchema: {} }, async () => json(R.getLayerCollisionMatrix(projectRoot)));
   server.registerTool("get_cloud_services_config", { description: "Get Unity Cloud / Unity Connect config if present.", inputSchema: {} }, async () => json(R.getCloudServicesConfig(projectRoot)));
   server.registerTool("get_package_dependency_graph", { description: "Get package dependency graph (nodes and edges from manifest + lock).", inputSchema: {} }, async () => json(R.getPackageDependencyGraph(projectRoot)));
+  server.registerTool("list_package_samples", { description: "List Samples folders or sample paths under Packages.", inputSchema: {} }, async () => json(R.listPackageSamples(projectRoot)));
 
   // --- 17. Render pipelines ---
   server.registerTool("list_render_pipelines", { description: "List render pipeline assets and volume profiles (URP/HDRP).", inputSchema: {} }, async () => json(R.listRenderPipelines(projectRoot)));
@@ -486,6 +547,7 @@ async function main() {
     { description: "List asset paths referenced by a prefab. Helps impact analysis.", inputSchema: { prefab_path: z.string().describe("e.g. Assets/Prefabs/Player.prefab") } },
     async (args: unknown) => json(R.getPrefabDependencies(projectRoot, (args as { prefab_path: string }).prefab_path))
   );
+  server.registerTool("get_release_readiness", { description: "One-shot release readiness: version, build scene count, packages, broken refs, assembly cycles, large assets.", inputSchema: {} }, async () => json(R.getReleaseReadiness(projectRoot)));
 
   const transport = new StdioServerTransport();
   await server.connect(transport);

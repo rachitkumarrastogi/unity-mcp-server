@@ -79,3 +79,22 @@ export function listVisualScriptingAssets(root: string): string[] {
   }
   return [...new Set(out)].slice(0, 100);
 }
+
+/** Given an asset path (script or folder under Assets), return the assembly that contains it (asmdef path and name). */
+export function getAssemblyForPath(root: string, assetPath: string): { assemblyName: string; asmdefPath: string } | null {
+  const normalized = assetPath.replace(/\\/g, "/").replace(/\/$/, "");
+  const pathUnderAssets = normalized.startsWith("Assets/") ? normalized : join(ASSETS, normalized);
+  const asms = getAssemblyDefinitions(root);
+  let best: { assemblyName: string; asmdefPath: string } | null = null;
+  let bestLen = 0;
+  for (const a of asms) {
+    const asmDir = a.path.split(/[/\\]/).slice(0, -1).join("/");
+    if (pathUnderAssets === asmDir || pathUnderAssets.startsWith(asmDir + "/")) {
+      if (asmDir.length > bestLen) {
+        bestLen = asmDir.length;
+        best = { assemblyName: a.name, asmdefPath: a.path };
+      }
+    }
+  }
+  return best;
+}
