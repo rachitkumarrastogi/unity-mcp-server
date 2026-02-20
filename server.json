@@ -7,12 +7,12 @@
     "url": "https://github.com/rachitkumarrastogi/unity-mcp-server",
     "source": "github"
   },
-  "version": "1.5.1",
+  "version": "1.5.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "unity-mcp-server",
-      "version": "1.5.1",
+      "version": "1.5.2",
       "transport": {
         "type": "stdio"
       },
