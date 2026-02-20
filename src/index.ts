@@ -122,6 +122,22 @@ async function main() {
     },
     async (args: unknown) => json(R.getAssemblyForPath(projectRoot, (args as { asset_path: string }).asset_path))
   );
+  server.registerTool(
+    "list_scripts_by_assembly",
+    {
+      description: "List C# script paths that belong to a given assembly (by name or asmdef path).",
+      inputSchema: { assembly_name_or_path: z.string().describe("Assembly name e.g. Assembly-CSharp or path to .asmdef") },
+    },
+    async (args: unknown) => json(R.listScriptsByAssembly(projectRoot, (args as { assembly_name_or_path: string }).assembly_name_or_path))
+  );
+  server.registerTool(
+    "list_asmdef_references",
+    {
+      description: "List assembly names that reference the given assembly (reverse dependencies).",
+      inputSchema: { assembly_name: z.string().describe("Assembly name e.g. MyGame.Runtime") },
+    },
+    async (args: unknown) => json(R.listAsmdefReferences(projectRoot, (args as { assembly_name: string }).assembly_name))
+  );
 
   server.registerTool(
     "list_scripts",
@@ -200,6 +216,22 @@ async function main() {
     },
     async (args: unknown) => json(R.getAllComponentsByType(projectRoot, (args as { component_type: string }).component_type))
   );
+  server.registerTool(
+    "get_scene_hierarchy_flat",
+    {
+      description: "Get a flat list of all GameObjects in a scene (name and layer).",
+      inputSchema: { scene_path: z.string().describe("e.g. Assets/Scenes/Main.unity") },
+    },
+    async (args: unknown) => json(R.getSceneHierarchyFlat(projectRoot, (args as { scene_path: string }).scene_path))
+  );
+  server.registerTool(
+    "get_lighting_scene_info",
+    {
+      description: "Get lighting-related info for a scene: referenced lighting assets and GI workflow mode if present.",
+      inputSchema: { scene_path: z.string().describe("e.g. Assets/Scenes/Main.unity") },
+    },
+    async (args: unknown) => json(R.getLightingSceneInfo(projectRoot, (args as { scene_path: string }).scene_path))
+  );
 
   // --- 4. Prefabs ---
   server.registerTool(
@@ -218,6 +250,14 @@ async function main() {
       inputSchema: { component_type: z.string().describe("e.g. Animator, Rigidbody") },
     },
     async (args: unknown) => json(R.listPrefabsWithComponent(projectRoot, (args as { component_type: string }).component_type))
+  );
+  server.registerTool(
+    "get_prefab_summary",
+    {
+      description: "Get a short summary of a prefab: root name, component count, and component type names.",
+      inputSchema: { prefab_path: z.string().describe("e.g. Assets/Prefabs/Player.prefab") },
+    },
+    async (args: unknown) => json(R.getPrefabSummary(projectRoot, (args as { prefab_path: string }).prefab_path))
   );
 
   // --- 5. Assets & references ---
@@ -316,6 +356,7 @@ async function main() {
     async (args: unknown) => json(R.getMetaForAsset(projectRoot, (args as { asset_path: string }).asset_path))
   );
   server.registerTool("get_broken_asset_refs", { description: "List prefabs, scenes, materials with any missing GUID reference (not only scripts).", inputSchema: {} }, async () => json(R.getBrokenAssetRefs(projectRoot)));
+  server.registerTool("list_scriptable_objects", { description: "List .asset files that are ScriptableObject instances (data assets).", inputSchema: {} }, async () => json(R.listScriptableObjectAssets(projectRoot)));
 
   // --- 6. Materials & shaders ---
   server.registerTool(
@@ -325,6 +366,14 @@ async function main() {
       inputSchema: { folder: z.string().optional() },
     },
     async (args: unknown) => json(R.getMaterials(projectRoot, (args as { folder?: string })?.folder))
+  );
+  server.registerTool(
+    "list_materials_using_shader",
+    {
+      description: "List material paths that use a given shader (pass shader GUID or asset path).",
+      inputSchema: { shader_guid_or_path: z.string().describe("32-char shader GUID or path e.g. Assets/Shaders/My.shader") },
+    },
+    async (args: unknown) => json(R.listMaterialsUsingShader(projectRoot, (args as { shader_guid_or_path: string }).shader_guid_or_path))
   );
 
   server.registerTool(
@@ -353,6 +402,14 @@ async function main() {
       inputSchema: { controller_path: z.string().describe("e.g. Assets/Animations/Player.controller") },
     },
     async (args: unknown) => json(R.getAnimatorStates(projectRoot, (args as { controller_path: string }).controller_path))
+  );
+  server.registerTool(
+    "get_animator_transitions",
+    {
+      description: "Get state names and transitions (from/to) from an Animator Controller.",
+      inputSchema: { controller_path: z.string().describe("e.g. Assets/Animations/Player.controller") },
+    },
+    async (args: unknown) => json(R.getAnimatorTransitions(projectRoot, (args as { controller_path: string }).controller_path))
   );
   server.registerTool("list_avatar_masks", { description: "List Avatar Mask (.mask) assets used by Animator.", inputSchema: {} }, async () => json(R.listAvatarMasks(projectRoot)));
   server.registerTool("list_animator_override_controllers", { description: "List AnimatorOverrideController .controller assets.", inputSchema: {} }, async () => json(R.listAnimatorOverrideControllers(projectRoot)));
@@ -577,6 +634,14 @@ async function main() {
     async (args: unknown) => json(R.getPrefabDependencies(projectRoot, (args as { prefab_path: string }).prefab_path))
   );
   server.registerTool("get_release_readiness", { description: "One-shot release readiness: version, build scene count, packages, broken refs, assembly cycles, large assets.", inputSchema: {} }, async () => json(R.getReleaseReadiness(projectRoot)));
+  server.registerTool(
+    "get_build_size_estimate",
+    {
+      description: "Estimate build size: aggregate assets referenced by all build scenes, total size and largest assets.",
+      inputSchema: { top_n: z.number().optional().describe("Number of largest assets to return, default 20").default(20) },
+    },
+    async (args: unknown) => json(R.getBuildSizeEstimate(projectRoot, (args as { top_n?: number })?.top_n ?? 20))
+  );
 
   // --- Meta: tool discovery for AI ---
   server.registerTool(

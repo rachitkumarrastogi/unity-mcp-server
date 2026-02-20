@@ -115,3 +115,24 @@ export function getScriptPublicApi(root: string, scriptPath: string): { classNam
   while ((m = fieldRe.exec(content)) !== null) publicFields.push(m[1]);
   return { className, baseType, publicMethods: [...new Set(publicMethods)], publicFields: [...new Set(publicFields)] };
 }
+
+/** List C# script paths that belong to the given assembly (by assembly name or asmdef path). */
+export function listScriptsByAssembly(root: string, assemblyNameOrPath: string): string[] {
+  const asms = getAssemblyDefinitions(root);
+  let asmDir: string | null = null;
+  if (assemblyNameOrPath.endsWith(".asmdef")) {
+    const a = asms.find((x) => x.path === assemblyNameOrPath || x.path.replace(/\\/g, "/") === assemblyNameOrPath.replace(/\\/g, "/"));
+    if (a) asmDir = a.path.split(/[/\\]/).slice(0, -1).join("/");
+  } else {
+    const a = asms.find((x) => x.name === assemblyNameOrPath);
+    if (a) asmDir = a.path.split(/[/\\]/).slice(0, -1).join("/");
+  }
+  if (!asmDir) return [];
+  return listScripts(root, asmDir);
+}
+
+/** List assembly names that reference the given assembly (reverse dependencies). */
+export function listAsmdefReferences(root: string, assemblyName: string): string[] {
+  const asms = getAssemblyDefinitions(root);
+  return asms.filter((a) => a.references.includes(assemblyName)).map((a) => a.name);
+}

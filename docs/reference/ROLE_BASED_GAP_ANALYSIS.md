@@ -1,6 +1,8 @@
 # Role-Based Gap Analysis
 
-This document maps **Unity developers**, **designers**, **scene/level creators**, and **product owners** to their typical needs, what the current tools already cover, and **what is missing**.
+This document maps **Unity developers**, **designers**, **scene/level creators**, and **product owners** to their typical needs and what the current tools cover.
+
+**Current status (101 tools):** The “missing” tools listed below were **subsequently implemented**. Today we have: `get_assembly_for_path`, `list_package_samples`, `get_texture_meta`, `list_prefabs_with_component`, `get_scene_objects_by_tag`, `get_all_components_by_type`, `get_release_readiness`, `search_assets_by_name`, plus audio/navigation/XR/video/terrain/lighting and other project/asset tools. For an up-to-date **tools-by-role** view see [TOOLS_BY_ROLE.md](../guides/TOOLS_BY_ROLE.md). For **suggested new tools** to add next see [SUGGESTED_TOOLS_TO_ADD.md](./SUGGESTED_TOOLS_TO_ADD.md).
 
 ---
 
@@ -30,7 +32,7 @@ This document maps **Unity developers**, **designers**, **scene/level creators**
 | Need | Current tool(s) | Gap? |
 |------|------------------|------|
 | Materials, shaders, shader graphs, VFX | `list_materials`, `list_shaders`, `list_shader_graphs`, `list_vfx_graphs` | No |
-| Textures, sprites, atlases, PPU | `list_assets_by_extension`, `list_sprite_assets`, `list_sprite_atlases` | Partial — No texture size/PPU from .meta. |
+| Textures, sprites, atlases, PPU | `list_assets_by_extension`, `list_sprite_assets`, `list_sprite_atlases`, `get_texture_meta` | No (implemented) |
 | Fonts (TMP + legacy) | `list_tmp_fonts`, `list_legacy_font_assets` | No |
 | UI (UXML/USS), render pipelines | `list_ui_documents`, `list_render_pipelines` | No |
 | Who uses a texture/material | `find_references` | No |

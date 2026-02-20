@@ -281,6 +281,28 @@ export function searchProject(
   return { assets, scripts, referrers };
 }
 
+/** List .asset paths that are ScriptableObject instances (asset references a script that extends ScriptableObject). */
+export function listScriptableObjectAssets(root: string): string[] {
+  const soScripts = findScriptsByContent(root, "ScriptableObject");
+  const soGuids = new Set<string>();
+  for (const scriptPath of soScripts) {
+    const guid = getGuidFromMeta(root, scriptPath);
+    if (guid) soGuids.add(guid);
+  }
+  if (soGuids.size === 0) return [];
+  const assets = listFilesRecursive(root, ASSETS, { ext: ".asset" });
+  return assets.filter((path) => {
+    const content = readFileSafe(root, path);
+    if (!content) return false;
+    const scriptRefRe = /m_Script:\s*\{\s*fileID:\s*\d+,\s*guid:\s*([a-f0-9]{32})/g;
+    let m: RegExpExecArray | null;
+    while ((m = scriptRefRe.exec(content)) !== null) {
+      if (soGuids.has(m[1])) return true;
+    }
+    return false;
+  });
+}
+
 /** List prefabs/scenes/materials that reference a GUID that does not exist in the project (any missing ref, not only script). */
 export function getBrokenAssetRefs(root: string): { assetPath: string; missingGuid: string }[] {
   const validGuids = new Set<string>();

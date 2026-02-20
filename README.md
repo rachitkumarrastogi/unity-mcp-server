@@ -91,6 +91,8 @@ Expand a category below to see the tools it includes.
 |------|-------------|-------------------------|
 | `list_assemblies` | Assembly definitions with references, platforms | *"List assembly definitions"* |
 | `get_assembly_for_path` | Assembly that contains a given script or folder path | *"Which assembly contains Assets/Scripts/Player.cs?"* |
+| `list_scripts_by_assembly` | C# script paths in a given assembly (by name or asmdef path) | *"List scripts in Assembly-CSharp"* · *"What scripts are in MyGame.Runtime?"* |
+| `list_asmdef_references` | Assembly names that reference a given assembly (reverse deps) | *"Who depends on MyGame.Core?"* |
 | `list_scripts` | C# scripts (optional folder filter) | *"List all C# scripts"* · *"Show scripts in Assets/Scripts"* |
 | `find_scripts_by_content` | By type/pattern (e.g. MonoBehaviour) | *"Find scripts that extend MonoBehaviour"* |
 | `get_assembly_dependency_graph` | Nodes and edges | *"Show assembly dependency graph"* |
@@ -110,9 +112,12 @@ Expand a category below to see the tools it includes.
 | `get_scene_components_by_type` | GameObjects in a scene with a component type (e.g. Camera, Light) | *"Which GameObjects have a Camera in Game.unity?"* |
 | `get_scene_objects_by_tag` | GameObjects in a scene with a given tag (e.g. Spawn) | *"Find objects with tag Spawn in this scene"* |
 | `get_all_components_by_type` | All Cameras/Lights/etc. across all scenes | *"List all Cameras in the project"* |
+| `get_scene_hierarchy_flat` | Flat list of GameObjects in a scene (name and layer) | *"List all objects in Main.unity with their layers"* |
+| `get_lighting_scene_info` | Lighting assets and GI workflow mode for a scene | *"What lighting does Main.unity use?"* |
 | `list_prefabs` | Prefabs (optional path prefix) | *"List all prefabs"* · *"List prefabs in Assets/Prefabs"* |
 | `list_prefab_variants` | Prefabs that are variants of another prefab | *"List prefab variants"* |
 | `list_prefabs_with_component` | Prefabs that contain a component type (e.g. Animator) | *"Which prefabs have an Animator?"* |
+| `get_prefab_summary` | Prefab summary: root name, component count, component types | *"Summarize Hero.prefab"* · *"What's in this prefab?"* |
 | `get_prefab_script_guids` | Script GUIDs used by a prefab | *"What scripts does Hero.prefab use?"* |
 | `list_subscenes` | ECS/DOTS .subscene assets | *"List subscenes"* |
 
@@ -137,6 +142,7 @@ Expand a category below to see the tools it includes.
 | `search_project` | Combined search: name pattern, script pattern, and/or referrers of path | *"Search project for X"* · *"What references this path?"* |
 | `get_meta_for_asset` | Read .meta for any asset path (guid, importer keys) | *"Show .meta for Assets/Models/character.fbx"* |
 | `get_broken_asset_refs` | Prefabs/scenes/materials with any missing GUID reference | *"Find broken asset references"* |
+| `list_scriptable_objects` | .asset files that are ScriptableObject instances | *"List all ScriptableObject assets"* |
 
 </details>
 
@@ -146,6 +152,7 @@ Expand a category below to see the tools it includes.
 | Tool | Description | Example prompt to type |
 |------|-------------|-------------------------|
 | `list_materials` | Materials (optional folder) | *"List all materials"* · *"List materials in Assets/Materials"* |
+| `list_materials_using_shader` | Materials that use a given shader (GUID or path) | *"Which materials use Standard shader?"* |
 | `list_shaders` | .shader in Assets and Packages | *"List shaders"* |
 | `list_shader_graphs` | Shader Graph assets | *"List Shader Graph assets"* |
 | `list_vfx_graphs` | VFX Graph assets | *"List VFX Graph assets"* |
@@ -160,6 +167,7 @@ Expand a category below to see the tools it includes.
 | `list_animator_controllers` | .controller assets | *"List animator controllers"* |
 | `list_animation_clips` | .anim assets | *"List animation clips"* |
 | `get_animator_states` | State names from a controller | *"What states are in Player.controller?"* |
+| `get_animator_transitions` | State names and from/to transitions from a controller | *"Show animator transitions in Player.controller"* |
 | `list_timeline_playables` | Timeline .playable assets | *"List Timeline playables"* |
 | `list_avatar_masks` | Avatar Mask (.mask) assets | *"List avatar masks"* |
 | `list_animator_override_controllers` | AnimatorOverrideController assets | *"List animator override controllers"* |
@@ -292,6 +300,7 @@ Expand a category below to see the tools it includes.
 | `get_broken_script_refs` | Prefabs/scenes with missing script refs | *"Find prefabs with missing script"* |
 | `get_prefab_dependencies` | Asset paths referenced by a prefab (impact analysis) | *"What does Hero.prefab depend on?"* |
 | `get_release_readiness` | One-shot: version, build scenes, packages, broken refs, cycles, large assets | *"Is the project release ready?"* · *"Run release readiness check"* |
+| `get_build_size_estimate` | Build size estimate: total size and largest assets from build scenes | *"What's the build size?"* · *"Show largest assets in the build"* |
 
 </details>
 
@@ -318,6 +327,19 @@ Expand a category below to see the tools it includes.
 </details>
 
 *All tools read from the project filesystem only.*
+
+---
+
+## Real-life examples
+
+Copy-paste these into Claude, Cursor, or any MCP client (with this server configured and `UNITY_PROJECT_PATH` set). The AI will pick the right tools.
+
+| Role | Example prompt |
+|------|-----------------|
+| **Developer** | *"Which assembly contains Assets/Scripts/Player.cs?"* · *"List scripts in MyGame.Runtime"* · *"Who depends on MyGame.Core?"* · *"Are there assembly dependency cycles?"* · *"Run release readiness check"* |
+| **Tester** | *"Which scenes are in the build?"* · *"List assemblies that have test in the name"* · *"Is the project release ready?"* · *"What's the build size and largest assets?"* |
+| **Game developer** | *"Which prefabs have an Animator?"* · *"Summarize Hero.prefab"* · *"Show animator transitions in Player.controller"* · *"List input action assets"* |
+| **Game designer** | *"Which materials use Standard shader?"* · *"List all ScriptableObject assets"* · *"Summarize Main.unity"* · *"What lighting does Main.unity use?"* · *"List all objects in Main.unity with their layers"* |
 
 ---
 
@@ -393,6 +415,6 @@ This repository does not include game code, assets, or secrets. The Unity projec
 ## Documentation
 
 - [**MCP Registry**](https://registry.modelcontextprotocol.io/?q=unity-mcp-server) — Discover and install this server from the official registry.
-- **Guides:** [Purpose and use cases](./docs/guides/PURPOSE.md) · [Publish to npm and MCP Registry](./docs/guides/PUBLISH.md) · [How it helps Unity developers](./docs/guides/HOW_IT_HELPS_UNITY_DEVELOPERS.md)
-- **Reference:** [Registry details](./docs/reference/REGISTRY.md) · [Comparison and rating](./docs/reference/COMPARISON_AND_RATING.md) · [Audits and gap analysis](./docs/reference/README.md)
+- **Guides:** [Quick start (end-to-end in your Unity project)](./docs/guides/QUICK_START_UNITY_CODEBASE.md) · [Purpose and use cases](./docs/guides/PURPOSE.md) · [Publish to npm and MCP Registry](./docs/guides/PUBLISH.md) · [How it helps Unity developers](./docs/guides/HOW_IT_HELPS_UNITY_DEVELOPERS.md) · [Tools by role](./docs/guides/TOOLS_BY_ROLE.md)
+- **Reference:** [Registry details](./docs/reference/REGISTRY.md) · [Comparison and rating](./docs/reference/COMPARISON_AND_RATING.md) · [Audits and gap analysis](./docs/reference/README.md) · [Suggested tools to add](./docs/reference/SUGGESTED_TOOLS_TO_ADD.md)
 - **Release notes:** [All versions](./docs/release-notes/README.md)

@@ -3,6 +3,7 @@
  */
 
 import { readFileSafe, listFilesRecursive, getAssetPathByGuid, ASSETS } from "./helpers.js";
+import { getSceneReferencedAssets } from "./assets.js";
 import { join } from "node:path";
 
 export function getAllScenes(root: string): string[] {
@@ -115,4 +116,49 @@ export function listPrefabsWithComponent(root: string, componentType: string): s
     const content = readFileSafe(root, path);
     return content?.includes(`${typeNorm}:`) ?? false;
   });
+}
+
+/** Flat list of GameObjects in a scene: name and layer. */
+export function getSceneHierarchyFlat(root: string, scenePath: string): { name: string; layer: number }[] {
+  const content = readFileSafe(root, scenePath);
+  if (!content) return [];
+  const out: { name: string; layer: number }[] = [];
+  const blocks = content.split(/---\s*(?=\d+:\s*\d+|!\w+)/);
+  for (const block of blocks) {
+    if (!block.includes("GameObject:")) continue;
+    const nameMatch = block.match(/m_Name:\s*([^\n]+)/);
+    const layerMatch = block.match(/m_Layer:\s*(\d+)/);
+    const name = nameMatch?.[1]?.trim() ?? "?";
+    const layer = layerMatch ? parseInt(layerMatch[1], 10) : 0;
+    out.push({ name, layer });
+  }
+  return out.slice(0, 500);
+}
+
+/** Prefab summary: root name, component count, component type names. */
+export function getPrefabSummary(root: string, prefabPath: string): { rootName: string; componentCount: number; componentTypes: string[] } | null {
+  const content = readFileSafe(root, prefabPath);
+  if (!content) return null;
+  const componentTypes: string[] = [];
+  const typeRe = /^(\d+:\s*\d+\s+|\!)(\w+):/gm;
+  let m: RegExpExecArray | null;
+  while ((m = typeRe.exec(content)) !== null) {
+    const typeName = m[2];
+    if (typeName && !componentTypes.includes(typeName)) componentTypes.push(typeName);
+  }
+  const firstGo = content.match(/GameObject:\s*\n\s+m_Name:\s*([^\n]+)/);
+  const rootName = firstGo?.[1]?.trim() ?? "?";
+  const compCount = (content.match(/MonoBehaviour:|Transform:|Animator:|RectTransform:/g) || []).length;
+  return { rootName, componentCount: compCount, componentTypes: componentTypes.slice(0, 50) };
+}
+
+/** Lighting info for a scene: referenced lighting assets and GI workflow mode if present. */
+export function getLightingSceneInfo(root: string, scenePath: string): { scenePath: string; referencedLightingAssets: string[]; giWorkflowMode?: number } {
+  const { resolved } = getSceneReferencedAssets(root, scenePath);
+  const lighting = resolved.filter((p) => /light|lighting|lightmap|reflection|reflectionprobe/i.test(p));
+  const content = readFileSafe(root, scenePath);
+  let giWorkflowMode: number | undefined;
+  const m = content?.match(/m_GIWorkflowMode:\s*(\d+)/);
+  if (m) giWorkflowMode = parseInt(m[1], 10);
+  return { scenePath, referencedLightingAssets: lighting, giWorkflowMode };
 }

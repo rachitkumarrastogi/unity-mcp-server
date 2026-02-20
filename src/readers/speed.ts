@@ -2,6 +2,8 @@
  * Speed & productivity tools.
  */
 
+import { statSync } from "node:fs";
+import { join } from "node:path";
 import { listScripts, getAssemblyDefinitions, getAssemblyDependencyGraph } from "./code.js";
 import { getPrefabs, getAllScenes } from "./scenes.js";
 import { getMaterials } from "./materials.js";
@@ -96,5 +98,40 @@ export function getReleaseReadiness(root: string): {
     brokenScriptRefCount: broken.length,
     hasAssemblyCycles: cycles.length > 0,
     largeAssetCount: large.length,
+  };
+}
+
+/** Build size estimate: aggregate referenced assets from all build scenes, total size and optional top N largest. */
+export function getBuildSizeEstimate(
+  root: string,
+  topN: number = 20
+): { totalSizeBytes: number; totalSizeMb: number; uniqueAssetCount: number; byScene: { scenePath: string; assetCount: number }[]; largestAssets: { path: string; sizeMb: number }[] } {
+  const buildScenes = getBuildScenes(root);
+  const allPaths = new Set<string>();
+  const byScene: { scenePath: string; assetCount: number }[] = [];
+  for (const scene of buildScenes) {
+    const { resolved } = getSceneReferencedAssets(root, scene.path);
+    for (const p of resolved) allPaths.add(p);
+    byScene.push({ scenePath: scene.path, assetCount: resolved.length });
+  }
+  let totalSizeBytes = 0;
+  const sizes: { path: string; sizeMb: number }[] = [];
+  for (const rel of allPaths) {
+    const full = join(root, rel);
+    try {
+      const size = statSync(full).size;
+      totalSizeBytes += size;
+      sizes.push({ path: rel, sizeMb: Math.round((size / 1024 / 1024) * 100) / 100 });
+    } catch {
+      /* skip */
+    }
+  }
+  sizes.sort((a, b) => b.sizeMb - a.sizeMb);
+  return {
+    totalSizeBytes,
+    totalSizeMb: Math.round((totalSizeBytes / 1024 / 1024) * 100) / 100,
+    uniqueAssetCount: allPaths.size,
+    byScene,
+    largestAssets: sizes.slice(0, topN),
   };
 }

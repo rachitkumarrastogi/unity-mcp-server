@@ -28,5 +28,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rachitkumarrastogi/unity-mcp-server.git"
+  },
+  "overrides": {
+    "ajv": "8.18.0"
   }
 }

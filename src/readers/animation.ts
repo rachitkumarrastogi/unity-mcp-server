@@ -40,3 +40,28 @@ export function listAnimatorOverrideControllers(root: string): string[] {
     return content?.includes("AnimatorOverrideController") ?? false;
   });
 }
+
+/** Animator controller transitions: state names and from/to pairs where parseable. */
+export function getAnimatorTransitions(root: string, controllerPath: string): { states: string[]; transitions: { fromState: string; toState: string }[] } {
+  const content = readFileSafe(root, controllerPath);
+  if (!content) return { states: [], transitions: [] };
+  const states = getAnimatorStates(root, controllerPath);
+  const transitions: { fromState: string; toState: string }[] = [];
+  const idToName = new Map<number, string>();
+  const stateBlockRe = /AnimatorState:\s*\n\s+m_Name:\s*([^\n]+)\s*\n[\s\S]*?m_FileID:\s*(\d+)/g;
+  let m: RegExpExecArray | null;
+  while ((m = stateBlockRe.exec(content)) !== null) {
+    const name = m[1].trim();
+    const id = parseInt(m[2], 10);
+    if (name && !/^\d+$/.test(name)) idToName.set(id, name);
+  }
+  const transRe = /AnimatorStateTransition:[\s\S]*?m_DstState:\s*\{\s*fileID:\s*(\d+)[\s\S]*?m_SrcState:\s*\{\s*fileID:\s*(\d+)/g;
+  while ((m = transRe.exec(content)) !== null) {
+    const dstId = parseInt(m[1], 10);
+    const srcId = parseInt(m[2], 10);
+    const fromState = idToName.get(srcId) ?? `State${srcId}`;
+    const toState = idToName.get(dstId) ?? `State${dstId}`;
+    transitions.push({ fromState, toState });
+  }
+  return { states, transitions: transitions.slice(0, 200) };
+}
