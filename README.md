@@ -49,7 +49,7 @@ Expand a category below to see the tools it includes.
 | [🎨 Materials & shaders](#materials-shaders) | [🎞️ Animation](#animation) | [🖼️ 2D & sprites](#2d-sprites) | [✨ Rendering](#rendering) |
 | [📝 TextMeshPro & UI](#textmeshpro-ui) | [🎮 Input](#input) | [🏷️ Tags & layers](#tags-layers) | [🌐 Addressables & localization](#addressables-localization) |
 | [🔊 Audio](#audio) | [🧪 Testing & docs](#testing-docs) | [🔄 CI & version control](#ci-version-control) | [🔌 Integrations](#integrations) |
-| [⚡ Speed & productivity](#speed) | [🔍 Meta](#meta) | | |
+| [⚡ Speed & productivity](#speed) | [🔍 Meta](#meta) | [🤖 AI & ML](#ai-ml) | |
 
 ---
 
@@ -301,6 +301,22 @@ Expand a category below to see the tools it includes.
 | `get_prefab_dependencies` | Asset paths referenced by a prefab (impact analysis) | *"What does Hero.prefab depend on?"* |
 | `get_release_readiness` | One-shot: version, build scenes, packages, broken refs, cycles, large assets | *"Is the project release ready?"* · *"Run release readiness check"* |
 | `get_build_size_estimate` | Build size estimate: total size and largest assets from build scenes | *"What's the build size?"* · *"Show largest assets in the build"* |
+
+</details>
+
+<details id="ai-ml">
+<summary><strong>🤖 AI & ML</strong></summary>
+
+| Tool | Description | Example prompt to type |
+|------|-------------|-------------------------|
+| `get_ai_stack_summary` | One-shot AI audit: packages, models, scripts, ML-Agents YAMLs | *"What AI does this project use?"* · *"Run an AI stack audit"* |
+| `get_ai_ml_package_inventory` | ML-Agents, Sentis, Barracuda, AI Navigation, Muse, Unity AI | *"List AI/ML Unity packages"* |
+| `list_ml_model_assets` | `.onnx`, `.nn`, `.pt`, `.tflite`, `.pb` model files | *"List ONNX models in the project"* |
+| `find_ai_related_scripts` | C# with Sentis, ML-Agents, NavMesh, behavior trees, LLM APIs | *"Which scripts use ML-Agents or Sentis?"* |
+| `list_ml_agents_training_configs` | ML-Agents trainer YAML configs | *"Find ML-Agents training configs"* |
+| `list_ai_prompt_or_config_assets` | Prompt/RAG-like JSON or MD under Assets | *"Any LLM prompt assets in Assets?"* |
+| `list_ai_skills` | Bundled Unity AI workflow skills | *"List Unity AI skills"* |
+| `read_ai_skill` | Read skill by id (`unity-ml-agents`, `unity-sentis-inference`, …) | *"Read the unity-ai-audit skill"* |
 
 </details>
 

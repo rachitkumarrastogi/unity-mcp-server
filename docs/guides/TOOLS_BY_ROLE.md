@@ -1,6 +1,6 @@
-# Tools by Role: Developer, Tester, Game Developer, Game Designer
+# Tools by Role: Developer, Tester, Game Developer, Game Designer, AI / ML Engineer
 
-This document maps the **101 tools** in unity-mcp-server to four roles so you can see what’s available for your job.
+This document maps the **110 tools** in unity-mcp-server to five roles so you can see what’s available for your job.
 
 ---
 
@@ -81,6 +81,24 @@ This document maps the **101 tools** in unity-mcp-server to four roles so you ca
 
 ---
 
+## 5. AI / ML engineer (game AI, inference, LLM)
+
+**Typical needs:** ML-Agents, Sentis/ONNX, NavMesh NPCs, prompt assets, AI package audit, shipping model size.
+
+| Category | Tools |
+|----------|--------|
+| **AI & ML** | `get_ai_stack_summary`, `get_ai_ml_package_inventory`, `list_ml_model_assets`, `find_ai_related_scripts`, `list_ml_agents_training_configs`, `list_ai_prompt_or_config_assets`, `list_ai_skills`, `read_ai_skill` |
+| **Navigation** | `get_navigation_settings`, `list_prefabs_with_component` (NavMeshAgent), `get_scene_components_by_type` |
+| **Code** | `find_scripts_by_content`, `find_script_references`, `get_script_public_api` |
+| **Build impact** | `get_build_size_estimate`, `find_references`, `get_prefab_dependencies`, `list_large_assets` |
+| **Release** | `get_release_readiness` |
+
+**Example prompts:** *"Audit the AI stack"* · *"List ONNX models and ML-Agents configs"* · *"Which scripts call OpenAI?"* · *"Read unity-sentis-inference skill"* · *"Prefabs with NavMeshAgent"*
+
+**Bundled skills** (via `read_ai_skill`): `unity-ai-audit`, `unity-ml-agents`, `unity-sentis-inference`, `unity-navmesh-npc`, `unity-llm-integration`
+
+---
+
 ## Meta: all roles
 
 | Tool | Purpose |
@@ -91,6 +109,7 @@ This document maps the **101 tools** in unity-mcp-server to four roles so you ca
 
 ## Summary
 
+- **AI / ML engineer:** ~15 tools (AI stack audit, models, ML-Agents, NavMesh, skills).
 - **Developer:** ~35 tools (assemblies, scripts, refs, cycles, release readiness, CI, docs).
 - **Tester:** ~25 tools (build, test assemblies, scenes, prefabs, release readiness, input, tags).
 - **Game developer:** ~40 tools (scenes, prefabs, animation, input, physics, navigation, integrations).

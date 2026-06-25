@@ -55,3 +55,6 @@ export * from "./integrations.js";
 
 // Speed & productivity
 export * from "./speed.js";
+
+// AI / ML / inference
+export * from "./ai.js";

@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-06-21
+
+### Added
+
+- **AI & ML tools (8):** `get_ai_ml_package_inventory`, `list_ml_model_assets`, `find_ai_related_scripts`, `list_ai_prompt_or_config_assets`, `list_ml_agents_training_configs`, `get_ai_stack_summary`, `list_ai_skills`, `read_ai_skill`.
+- **Bundled agent skills:** `unity-ml-agents`, `unity-sentis-inference`, `unity-navmesh-npc`, `unity-llm-integration`, `unity-ai-audit` (under `skills/` in the npm package).
+- **110 tools total** (was 101).
+
+---
+
 ## [1.5.2] - 2026-02-16
 
 ### Changed

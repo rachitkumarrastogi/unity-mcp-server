@@ -124,6 +124,14 @@ export const TOOLS_CATALOG: ToolEntry[] = [
   { name: "get_release_readiness", description: "One-shot: version, build scenes, packages, broken refs, cycles, large assets", category: "Speed & productivity" },
   { name: "get_build_size_estimate", description: "Build size estimate: total size and largest assets from build scenes", category: "Speed & productivity" },
   { name: "search_tools", description: "Find the most relevant tools by intent (e.g. find references, missing script). Call with no query to list all tools.", category: "Meta" },
+  { name: "get_ai_ml_package_inventory", description: "Unity AI/ML packages (ML-Agents, Sentis, Barracuda, AI Navigation, Muse)", category: "AI & ML" },
+  { name: "list_ml_model_assets", description: "ML model files (.onnx, .nn, .pt, .tflite, .pb)", category: "AI & ML" },
+  { name: "find_ai_related_scripts", description: "C# scripts matching AI/ML/NavMesh/LLM patterns", category: "AI & ML" },
+  { name: "list_ai_prompt_or_config_assets", description: "Prompt/RAG-like JSON or MD under Assets", category: "AI & ML" },
+  { name: "list_ml_agents_training_configs", description: "ML-Agents trainer YAML configs", category: "AI & ML" },
+  { name: "get_ai_stack_summary", description: "One-shot AI stack: packages, models, scripts, configs", category: "AI & ML" },
+  { name: "list_ai_skills", description: "Bundled Unity AI agent skills (workflows)", category: "AI & ML" },
+  { name: "read_ai_skill", description: "Read bundled skill by id (unity-ml-agents, etc.)", category: "AI & ML" },
 ];
 
 export function searchToolsCatalog(query: string | undefined): { category: string; tools: ToolEntry[] }[] {

@@ -2,17 +2,17 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.rachitkumarrastogi/unity-mcp-server",
   "title": "Unity MCP Server",
-  "description": "MCP server for Unity: project info, build scenes, agent docs. No Unity Editor. Cursor, Claude.",
+  "description": "MCP server for Unity: project info, build scenes, AI/ML discovery, agent skills. No Unity Editor. Cursor, Claude.",
   "repository": {
     "url": "https://github.com/rachitkumarrastogi/unity-mcp-server",
     "source": "github"
   },
-  "version": "1.5.2",
+  "version": "1.6.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "unity-mcp-server",
-      "version": "1.5.2",
+      "version": "1.6.0",
       "transport": {
         "type": "stdio"
       },

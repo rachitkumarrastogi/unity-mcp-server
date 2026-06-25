@@ -25,7 +25,7 @@ async function main() {
 
   const server = new McpServer({
     name: "unity-mcp-server",
-    version: "1.5.0",
+    version: "1.6.0",
   });
 
   const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
@@ -651,6 +651,88 @@ async function main() {
       inputSchema: { query: z.string().optional().describe("Optional search term to filter tools by name or description") },
     },
     async (args: unknown) => json(searchToolsCatalog((args as { query?: string })?.query))
+  );
+
+  // --- AI / ML / inference ---
+  server.registerTool(
+    "get_ai_ml_package_inventory",
+    {
+      description: "List Unity AI/ML packages in manifest (ML-Agents, Sentis, Barracuda, AI Navigation, Muse, Unity AI).",
+      inputSchema: {},
+    },
+    async () => json(R.getAiMlPackageInventory(projectRoot))
+  );
+
+  server.registerTool(
+    "list_ml_model_assets",
+    {
+      description: "List ML model files under Assets (.onnx, .nn, .pt, .tflite, .pb).",
+      inputSchema: {},
+    },
+    async () => json(R.listMlModelAssets(projectRoot))
+  );
+
+  server.registerTool(
+    "find_ai_related_scripts",
+    {
+      description: "Scan C# scripts for AI/ML patterns: Sentis, ML-Agents, NavMesh, behavior trees, ONNX, LLM API strings.",
+      inputSchema: {},
+    },
+    async () => json(R.findAiRelatedScripts(projectRoot))
+  );
+
+  server.registerTool(
+    "list_ai_prompt_or_config_assets",
+    {
+      description: "Heuristic scan for JSON/MD assets that look like prompts, RAG, or LLM config under Assets.",
+      inputSchema: {},
+    },
+    async () => json(R.listAiPromptOrConfigAssets(projectRoot))
+  );
+
+  server.registerTool(
+    "list_ml_agents_training_configs",
+    {
+      description: "Find ML-Agents trainer YAML configs in project root and common folders.",
+      inputSchema: {},
+    },
+    async () => json(R.listMlAgentsTrainingConfigs(projectRoot))
+  );
+
+  server.registerTool(
+    "get_ai_stack_summary",
+    {
+      description: "One-shot AI stack summary: packages, model files, script hits, ML-Agents configs. Set include_prompt_assets for prompt-like JSON/MD scan.",
+      inputSchema: {
+        include_prompt_assets: z.boolean().optional().describe("Also scan for prompt/RAG-like assets").default(false),
+      },
+    },
+    async (args: unknown) => {
+      const include = (args as { include_prompt_assets?: boolean })?.include_prompt_assets ?? false;
+      return json(R.getAiStackSummary(projectRoot, include));
+    }
+  );
+
+  server.registerTool(
+    "list_ai_skills",
+    {
+      description: "List bundled Unity AI agent skills shipped with unity-mcp-server (ML-Agents, Sentis, NavMesh NPC, LLM integration, audit workflows).",
+      inputSchema: {},
+    },
+    async () => json(R.listBundledAiSkills())
+  );
+
+  server.registerTool(
+    "read_ai_skill",
+    {
+      description: "Read a bundled Unity AI skill by id (from list_ai_skills). Teaches agents how to work on Unity AI features.",
+      inputSchema: { skill_id: z.string().describe("Skill folder id, e.g. unity-ml-agents") },
+    },
+    async (args: unknown) => {
+      const skill = R.readBundledAiSkill((args as { skill_id: string }).skill_id);
+      if (!skill) return text(`Skill not found: ${(args as { skill_id: string }).skill_id}`);
+      return text(skill.content);
+    }
   );
 
   const transport = new StdioServerTransport();
