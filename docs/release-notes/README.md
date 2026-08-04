@@ -4,6 +4,7 @@ Release notes are kept here for every version. Each file is named by version (e.
 
 | Version | Notes |
 |---------|--------|
+| [v1.6.3](./v1.6.3.md) | 2026-08-04 — Revert Socket Registry overrides (unpopular-package quality hit) |
 | [v1.6.2](./v1.6.2.md) | 2026-08-04 — Security: Socket Registry overrides for remaining supply-chain alerts |
 | [v1.6.1](./v1.6.1.md) | 2026-08-04 — Security: MCP SDK 1.30 + patched transitive overrides (`npm audit` clean) |
 | [v1.6.0](./v1.6.0.md) | 2026-06-21 — AI/ML tools + bundled skills (110 tools) |

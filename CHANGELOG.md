@@ -5,6 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3] - 2026-08-04
+
+### Security
+
+- Reverted Socket Registry (`@socketregistry/*`) overrides from 1.6.2. Those cleared “optimized override available” alerts but introduced **Unpopular package** quality hits (e.g. `@socketregistry/es-define-property`) and lowered Supply Chain / Quality scores. CVE patches from 1.6.1 remain.
+
+---
+
 ## [1.6.2] - 2026-08-04
 
 ### Security
