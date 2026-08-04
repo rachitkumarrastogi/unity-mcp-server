@@ -26,8 +26,9 @@ Run `get_ai_stack_summary` with `include_prompt_assets: true`.
 
 Call `list_ai_skills` (returns `category`) then `read_ai_skill`.
 
-See `skills/README.md` for the full tree. Highlights:
+Skills follow Unity Editor domains — see `skills/README.md`. Highlights:
 
+- **Scenes:** `unity-scenes-workflow`
 - **Model-agnostic:** `unity-model-agnostic-inference`
 - **Vendor-specific:** `unity-ml-agents`, `unity-sentis-inference`, `unity-llm-integration`
 - **Gameplay AI:** `unity-navmesh-npc`

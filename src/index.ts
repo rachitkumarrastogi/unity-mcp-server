@@ -26,7 +26,7 @@ async function main() {
 
   const server = new McpServer({
     name: "unity-mcp-server",
-    version: "1.6.6",
+    version: "1.7.0",
   });
 
   const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
@@ -654,6 +654,88 @@ async function main() {
     async (args: unknown) => json(searchToolsCatalog((args as { query?: string })?.query))
   );
 
+  // --- Unity 6.x coverage gaps ---
+  server.registerTool(
+    "get_multiplayer_stack",
+    {
+      description: "Detect Netcode / multiplayer packages and NetworkBehaviour-style scripts (NGO, Relay, Lobby, Mirror, Photon, …).",
+      inputSchema: {},
+    },
+    async () => json(R.getMultiplayerStack(projectRoot))
+  );
+  server.registerTool(
+    "list_build_profiles",
+    {
+      description: "List Unity 6 Build Profile assets (plus whether classic EditorBuildSettings exists).",
+      inputSchema: {},
+    },
+    async () => json(R.listBuildProfiles(projectRoot))
+  );
+  server.registerTool(
+    "get_physics_stack",
+    {
+      description: "Physics packages (Unity Physics, Physics Core 2D), module hints, and Rigidbody/physics script hits.",
+      inputSchema: {},
+    },
+    async () => json(R.getPhysicsStack(projectRoot))
+  );
+  server.registerTool(
+    "get_optimization_package_inventory",
+    {
+      description: "Adaptive Performance and Project Auditor packages, scaler assets, and script usage.",
+      inputSchema: {},
+    },
+    async () => json(R.getOptimizationPackageInventory(projectRoot))
+  );
+  server.registerTool(
+    "get_ugs_cloud_stack",
+    {
+      description: "Unity Gaming Services / Cloud Code / Auth / Economy package and script inventory.",
+      inputSchema: {},
+    },
+    async () => json(R.getUgsCloudStack(projectRoot))
+  );
+  server.registerTool(
+    "get_accessibility_stack",
+    {
+      description: "Accessibility module/package presence and AccessibilityNode / AssistiveSupport script hits.",
+      inputSchema: {},
+    },
+    async () => json(R.getAccessibilityStack(projectRoot))
+  );
+  server.registerTool(
+    "list_cinemachine_assets",
+    {
+      description: "Cinemachine package + virtual camera assets/prefabs under Assets.",
+      inputSchema: {},
+    },
+    async () => json(R.listCinemachineAssets(projectRoot))
+  );
+  server.registerTool(
+    "get_platform_build_hints",
+    {
+      description: "PlayerSettings snippets for Android/WebGL/etc., build target, and related packages (Unity 6 platform pass).",
+      inputSchema: {},
+    },
+    async () => json(R.getPlatformBuildHints(projectRoot))
+  );
+  server.registerTool(
+    "get_render_pipeline_migration_hints",
+    {
+      description: "Infer BIRP vs URP/HDRP and flag Built-in RP deprecation / migration risk (Unity 6.5+).",
+      inputSchema: {},
+    },
+    async () => json(R.getRenderPipelineMigrationHints(projectRoot))
+  );
+  server.registerTool(
+    "get_localization_stack",
+    {
+      description: "Localization package + Locale/StringTable assets (broader than get_localization_tables).",
+      inputSchema: {},
+    },
+    async () => json(R.getLocalizationStack(projectRoot))
+  );
+
   // --- AI / ML / inference ---
   server.registerTool(
     "get_ai_ml_package_inventory",
@@ -717,7 +799,7 @@ async function main() {
   server.registerTool(
     "list_ai_skills",
     {
-      description: "List bundled workflow skills (categorized: ai-ml, shipping, content, performance, integrations, platform). Model-agnostic and vendor-specific.",
+      description: "List bundled workflow skills by Unity domain (scenes, prefabs, assets, project, code, ai-ml, performance, …).",
       inputSchema: {},
     },
     async () => json(R.listBundledAiSkills())
@@ -726,8 +808,8 @@ async function main() {
   server.registerTool(
     "read_ai_skill",
     {
-      description: "Read a bundled skill by id from list_ai_skills (e.g. unity-runtime-performance, unity-model-agnostic-inference).",
-      inputSchema: { skill_id: z.string().describe("Skill folder id, e.g. unity-ml-agents or unity-runtime-performance") },
+      description: "Read a bundled skill by id from list_ai_skills (e.g. unity-scenes-workflow, unity-runtime-performance).",
+      inputSchema: { skill_id: z.string().describe("Skill folder id, e.g. unity-scenes-workflow or unity-ml-agents") },
     },
     async (args: unknown) => {
       const skill = R.readBundledAiSkill((args as { skill_id: string }).skill_id);

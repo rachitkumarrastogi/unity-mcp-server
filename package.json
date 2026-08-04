@@ -1,7 +1,7 @@
 {
   "name": "unity-mcp-server",
-  "version": "1.6.6",
-  "description": "Lightweight MCP server for Unity - project info, AI/ML discovery, agent skills, 110+ tools (no Unity Editor required)",
+  "version": "1.7.0",
+  "description": "Lightweight MCP server for Unity - project info, Unity 6 coverage, AI/ML discovery, 39 agent skills, 130+ tools (no Unity Editor required)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {

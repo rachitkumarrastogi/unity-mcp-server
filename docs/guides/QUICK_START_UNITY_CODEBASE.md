@@ -147,7 +147,7 @@ Once the server is connected and `UNITY_PROJECT_PATH` is set, you can ask in **n
 
 - *"What Unity tools do you have?"* — the AI can use `search_tools` to list or filter tools.
 
-More examples: see the README [“Example prompt to type”](https://github.com/rachitkumarrastogi/unity-mcp-server#what-to-type-in-claude--cursor-or-any-other-mcp-client) column and [How it helps Unity developers](./HOW_IT_HELPS_UNITY_DEVELOPERS.md).
+More examples: see the README [“Example prompt to type”](https://github.com/rachitkumarrastogi/unity-mcp-server#what-to-type-in-claude--cursor-or-any-other-mcp-client) column and [skills/README.md](../../skills/README.md).
 
 ---
 
@@ -174,6 +174,6 @@ So: the server gives the AI **read-only** project context; you and the Editor re
 
 ## Next steps
 
-- **[Tools by role](./TOOLS_BY_ROLE.md)** — See which tools suit developers, testers, game developers, and designers.
-- **[How it helps Unity developers](./HOW_IT_HELPS_UNITY_DEVELOPERS.md)** — Task-based examples and conversation patterns.
+- **[Tools by role](./TOOLS_BY_ROLE.md)** — Which tools suit developers, testers, and designers.
+- **[skills/README.md](../../skills/README.md)** — Unity-domain agent workflows (scenes, prefabs, assets, …).
 - **Main [README](../../README.md)** — Full tool list with example prompts and configuration.

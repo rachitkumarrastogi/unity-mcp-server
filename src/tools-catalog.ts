@@ -130,8 +130,18 @@ export const TOOLS_CATALOG: ToolEntry[] = [
   { name: "list_ai_prompt_or_config_assets", description: "Prompt/RAG-like JSON or MD under Assets", category: "AI & ML" },
   { name: "list_ml_agents_training_configs", description: "ML-Agents trainer YAML configs", category: "AI & ML" },
   { name: "get_ai_stack_summary", description: "One-shot AI stack: packages, models, scripts, configs", category: "AI & ML" },
-  { name: "list_ai_skills", description: "Bundled skills by category (ai-ml, shipping, content, performance, …)", category: "AI & ML" },
-  { name: "read_ai_skill", description: "Read skill by id (e.g. unity-runtime-performance, unity-model-agnostic-inference)", category: "AI & ML" },
+  { name: "list_ai_skills", description: "Bundled skills by Unity domain (scenes, prefabs, assets, ai-ml, …)", category: "AI & ML" },
+  { name: "read_ai_skill", description: "Read skill by id (e.g. unity-scenes-workflow, unity-runtime-performance)", category: "AI & ML" },
+  { name: "get_multiplayer_stack", description: "Netcode / multiplayer packages and scripts", category: "Multiplayer & services" },
+  { name: "list_build_profiles", description: "Unity 6 Build Profile assets", category: "Project & build" },
+  { name: "get_physics_stack", description: "Unity Physics / Physics Core 2D / classic physics inventory", category: "Project & build" },
+  { name: "get_optimization_package_inventory", description: "Adaptive Performance + Project Auditor", category: "Speed & productivity" },
+  { name: "get_ugs_cloud_stack", description: "Unity Gaming Services / Cloud Code inventory", category: "Multiplayer & services" },
+  { name: "get_accessibility_stack", description: "Accessibility APIs and packages", category: "Project & build" },
+  { name: "list_cinemachine_assets", description: "Cinemachine cameras and related assets", category: "Animation" },
+  { name: "get_platform_build_hints", description: "Android/WebGL PlayerSettings + platform packages", category: "Project & build" },
+  { name: "get_render_pipeline_migration_hints", description: "BIRP vs URP/HDRP migration risk", category: "Rendering" },
+  { name: "get_localization_stack", description: "Localization package + locale/string table assets", category: "Addressables & localization" },
 ];
 
 export function searchToolsCatalog(query: string | undefined): { category: string; tools: ToolEntry[] }[] {

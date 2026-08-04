@@ -2,17 +2,17 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.rachitkumarrastogi/unity-mcp-server",
   "title": "Unity MCP Server",
-  "description": "MCP server for Unity: 110+ tools, AI/ML discovery, bundled skills. No Editor.",
+  "description": "MCP server for Unity: 130+ tools, Unity 6 skills, AI/ML discovery. No Editor.",
   "repository": {
     "url": "https://github.com/rachitkumarrastogi/unity-mcp-server",
     "source": "github"
   },
-  "version": "1.6.6",
+  "version": "1.7.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "unity-mcp-server",
-      "version": "1.6.6",
+      "version": "1.7.0",
       "transport": {
         "type": "stdio"
       },

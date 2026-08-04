@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-08-04
+
+### Added
+
+- **Unity 6 coverage skills (10):** `unity-multiplayer-netcode`, `unity-ugs-cloud`, `unity-build-profiles`, `unity-physics-audit`, `unity-accessibility`, `unity-adaptive-performance`, `unity-birp-urp-migration`, `unity-cinemachine`, `unity-localization`, `unity-platform-player-settings`.
+- **Matching tools (10):** `get_multiplayer_stack`, `list_build_profiles`, `get_physics_stack`, `get_optimization_package_inventory`, `get_ugs_cloud_stack`, `get_accessibility_stack`, `list_cinemachine_assets`, `get_platform_build_hints`, `get_render_pipeline_migration_hints`, `get_localization_stack`.
+- **`unity-scenes-workflow`** skill for build list → hierarchy → components.
+
+### Changed
+
+- Skills reorganized into **Unity Editor domains** (`scenes/`, `prefabs/`, `assets/`, `project/`, `code/`, …). Skill **ids unchanged**.
+- Trimmed repo docs: removed `docs/reference/`, per-version `docs/release-notes/`, and duplicate guides. History lives in this changelog.
+- **39** bundled skills; **130+** tools. Backward compatible with 1.6.x MCP configs.
+
+---
+
 ## [1.6.6] - 2026-08-04
 
 ### Added
@@ -62,7 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Cleared Socket.dev Dependency Alerts Report (45 CVE rows, 0.1–0.45): bumped `@modelcontextprotocol/sdk` to `^1.30.0` and pinned patched transitive overrides (`hono@4.13.0`, `@hono/node-server@2.1.0`, `express-rate-limit@8.6.2`, `path-to-regexp@8.4.2`, `body-parser@2.3.0`, `qs@6.15.3`, `fast-uri@4.1.2`, `ip-address@10.4.0`, `ajv@8.20.0`, `esbuild@0.28.1`). See [docs/release-notes/v1.6.1.md](./docs/release-notes/v1.6.1.md).
+- Cleared Socket.dev Dependency Alerts Report (45 CVE rows, 0.1–0.45): bumped `@modelcontextprotocol/sdk` to `^1.30.0` and pinned patched transitive overrides (`hono@4.13.0`, `@hono/node-server@2.1.0`, `express-rate-limit@8.6.2`, `path-to-regexp@8.4.2`, `body-parser@2.3.0`, `qs@6.15.3`, `fast-uri@4.1.2`, `ip-address@10.4.0`, `ajv@8.20.0`, `esbuild@0.28.1`). Details under **[1.6.1]** in this changelog.
 - `npm audit` reports **0 vulnerabilities**.
 - Runtime path unchanged: this server uses **stdio only**; HTTP/SSE demo code inside the MCP SDK is not loaded.
 

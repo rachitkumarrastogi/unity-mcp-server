@@ -95,7 +95,7 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 
 **Example prompts:** *"Audit the AI stack"* · *"List ONNX models and ML-Agents configs"* · *"Which scripts call OpenAI?"* · *"Read unity-sentis-inference skill"* · *"Prefabs with NavMeshAgent"*
 
-**Bundled skills** (via `list_ai_skills` / `read_ai_skill`): categorized under `skills/` (`ai-ml`, `shipping`, `content`, `performance`, `integrations`, `platform`). Highlights: `unity-model-agnostic-inference`, `unity-runtime-performance`, `unity-ai-audit`.
+**Bundled skills** (via `list_ai_skills` / `read_ai_skill`): Unity Editor domains under `skills/` — including `unity-scenes-workflow`, `unity-multiplayer-netcode`, `unity-build-profiles`, `unity-ugs-cloud`, `unity-physics-audit`.
 
 ---
 
@@ -115,4 +115,4 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 - **Game developer:** ~40 tools (scenes, prefabs, animation, input, physics, navigation, integrations).
 - **Game designer:** ~35 tools (scenes, assets, materials, 2D, UI, animation, audio, localization).
 
-Many tools are shared across roles. Use the [README](../../README.md) “Example prompt to type” column and [How it helps Unity developers](./HOW_IT_HELPS_UNITY_DEVELOPERS.md) for concrete prompts.
+Many tools are shared across roles. Use the [README](../../README.md) “Example prompt to type” column and [skills/README.md](../../skills/README.md) for domain workflows (scenes, prefabs, assets, …).

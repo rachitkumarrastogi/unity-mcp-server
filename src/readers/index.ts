@@ -58,3 +58,6 @@ export * from "./speed.js";
 
 // AI / ML / inference
 export * from "./ai.js";
+
+// Unity 6.x coverage (multiplayer, build profiles, physics, UGS, …)
+export * from "./unity6.js";

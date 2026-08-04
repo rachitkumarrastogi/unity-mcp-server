@@ -285,6 +285,24 @@ Expand a category below to see the tools it includes.
 | `list_lottie_assets` | Lottie JSON assets | *"List Lottie assets"* |
 | `get_analytics_or_crash_config` | Sentry, Crashlytics, BugSnag, etc. | *"What analytics or crash reporting is set up?"* |
 | `get_ads_config` | Unity Ads, AdMob, ironSource presence | *"Is ads SDK configured?"* |
+| `get_multiplayer_stack` | Netcode / multiplayer packages and scripts | *"What multiplayer stack does this use?"* |
+| `get_ugs_cloud_stack` | Unity Gaming Services / Cloud Code inventory | *"Is UGS or Cloud Code set up?"* |
+
+</details>
+
+<details id="unity6">
+<summary><strong>🧱 Unity 6 coverage</strong></summary>
+
+| Tool | Description | Example prompt to type |
+|------|-------------|-------------------------|
+| `list_build_profiles` | Unity 6 Build Profile assets | *"List build profiles"* |
+| `get_physics_stack` | Unity Physics / Physics Core 2D / classic physics | *"Audit the physics stack"* |
+| `get_optimization_package_inventory` | Adaptive Performance + Project Auditor | *"Is Adaptive Performance installed?"* |
+| `get_accessibility_stack` | Accessibility APIs and packages | *"Any accessibility APIs in use?"* |
+| `list_cinemachine_assets` | Cinemachine cameras and related assets | *"List Cinemachine assets"* |
+| `get_platform_build_hints` | Android/WebGL PlayerSettings snippets | *"Show platform build hints"* |
+| `get_render_pipeline_migration_hints` | BIRP vs URP/HDRP migration risk | *"Are we still on Built-in RP?"* |
+| `get_localization_stack` | Localization package + locale tables | *"Audit localization setup"* |
 
 </details>
 
@@ -315,8 +333,8 @@ Expand a category below to see the tools it includes.
 | `find_ai_related_scripts` | C# with Sentis, ML-Agents, NavMesh, behavior trees, LLM APIs | *"Which scripts use ML-Agents or Sentis?"* |
 | `list_ml_agents_training_configs` | ML-Agents trainer YAML configs | *"Find ML-Agents training configs"* |
 | `list_ai_prompt_or_config_assets` | Prompt/RAG-like JSON or MD under Assets | *"Any LLM prompt assets in Assets?"* |
-| `list_ai_skills` | Bundled skills by category (28: ai-ml, shipping, content, performance, …) | *"List Unity skills"* |
-| `read_ai_skill` | Read skill by id (e.g. `unity-runtime-performance`, `unity-model-agnostic-inference`) | *"Read the unity-ai-audit skill"* |
+| `list_ai_skills` | Bundled skills by Unity domain (39: scenes, multiplayer, build profiles, …) | *"List Unity skills"* |
+| `read_ai_skill` | Read skill by id (e.g. `unity-scenes-workflow`, `unity-multiplayer-netcode`) | *"Read the unity-ai-audit skill"* |
 
 </details>
 
@@ -431,6 +449,6 @@ This repository does not include game code, assets, or secrets. The Unity projec
 ## Documentation
 
 - [**MCP Registry**](https://registry.modelcontextprotocol.io/?q=unity-mcp-server) — Discover and install this server from the official registry.
-- **Guides:** [Quick start (end-to-end in your Unity project)](./docs/guides/QUICK_START_UNITY_CODEBASE.md) · [Purpose and use cases](./docs/guides/PURPOSE.md) · [Publish to npm and MCP Registry](./docs/guides/PUBLISH.md) · [How it helps Unity developers](./docs/guides/HOW_IT_HELPS_UNITY_DEVELOPERS.md) · [Tools by role](./docs/guides/TOOLS_BY_ROLE.md)
-- **Reference:** [Registry details](./docs/reference/REGISTRY.md) · [Comparison and rating](./docs/reference/COMPARISON_AND_RATING.md) · [Audits and gap analysis](./docs/reference/README.md) · [Suggested tools to add](./docs/reference/SUGGESTED_TOOLS_TO_ADD.md)
-- **Release notes:** [All versions](./docs/release-notes/README.md)
+- **Guides:** [Quick start](./docs/guides/QUICK_START_UNITY_CODEBASE.md) · [Publish](./docs/guides/PUBLISH.md) · [Tools by role](./docs/guides/TOOLS_BY_ROLE.md)
+- **Skills:** [Unity-domain agent skills](./skills/README.md)
+- **Changelog:** [CHANGELOG.md](./CHANGELOG.md)

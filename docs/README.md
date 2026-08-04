@@ -2,10 +2,8 @@
 
 | Folder | Contents |
 |--------|----------|
-| [**release-notes/**](./release-notes/README.md) | Release notes for each version (kept permanently) |
-| [**guides/**](./guides/README.md) | Purpose, publish steps, how it helps Unity developers |
-| [**reference/**](./reference/README.md) | Registry, comparison, audits, gap analysis |
+| [**guides/**](./guides/README.md) | Quick start, publish, tools by role |
 
-The main [README](../README.md) in the repo root links to all of these.
+Version history lives in the root [CHANGELOG.md](../CHANGELOG.md).
 
-**Maintenance:** Prefer updating existing docs over adding new MD files so the tree stays meaningful.
+Agent workflow skills live in [skills/](../skills/README.md) (Unity Editor domains).
