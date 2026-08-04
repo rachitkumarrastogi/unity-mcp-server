@@ -1,6 +1,6 @@
 {
   "name": "unity-mcp-server",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Lightweight MCP server for Unity - project info, AI/ML discovery, agent skills, 110+ tools (no Unity Editor required)",
   "type": "module",
   "main": "dist/index.js",
@@ -34,12 +34,20 @@
     "@hono/node-server": "2.1.0",
     "ajv": "8.20.0",
     "body-parser": "2.3.0",
+    "es-define-property": "npm:@socketregistry/es-define-property@1.0.7",
     "esbuild": "0.28.1",
     "express-rate-limit": "8.6.2",
     "fast-uri": "4.1.2",
+    "function-bind": "npm:@socketregistry/function-bind@1.0.7",
+    "gopd": "npm:@socketregistry/gopd@1.0.7",
+    "has-symbols": "npm:@socketregistry/has-symbols@1.0.7",
+    "hasown": "npm:@socketregistry/hasown@1.0.7",
     "hono": "4.13.0",
     "ip-address": "10.4.0",
+    "object-assign": "npm:@socketregistry/object-assign@1.0.5",
     "path-to-regexp": "8.4.2",
-    "qs": "6.15.3"
+    "qs": "6.15.3",
+    "safer-buffer": "npm:@socketregistry/safer-buffer@1.0.10",
+    "side-channel": "npm:@socketregistry/side-channel@1.0.10"
   }
 }
