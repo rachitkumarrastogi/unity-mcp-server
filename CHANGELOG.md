@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-08-04
+
+### Security
+
+- Cleared Socket.dev Dependency Alerts Report (45 CVE rows, 0.1–0.45): bumped `@modelcontextprotocol/sdk` to `^1.30.0` and pinned patched transitive overrides (`hono@4.13.0`, `@hono/node-server@2.1.0`, `express-rate-limit@8.6.2`, `path-to-regexp@8.4.2`, `body-parser@2.3.0`, `qs@6.15.3`, `fast-uri@4.1.2`, `ip-address@10.4.0`, `ajv@8.20.0`, `esbuild@0.28.1`). See [docs/release-notes/v1.6.1.md](./docs/release-notes/v1.6.1.md).
+- `npm audit` reports **0 vulnerabilities**.
+- Runtime path unchanged: this server uses **stdio only**; HTTP/SSE demo code inside the MCP SDK is not loaded.
+
+---
+
 ## [1.6.0] - 2026-06-21
 
 ### Added

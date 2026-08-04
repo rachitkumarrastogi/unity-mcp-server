@@ -1,6 +1,6 @@
 {
   "name": "unity-mcp-server",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Lightweight MCP server for Unity - project info, AI/ML discovery, agent skills, 110+ tools (no Unity Editor required)",
   "type": "module",
   "main": "dist/index.js",
@@ -10,14 +10,15 @@
   "scripts": {
     "build": "node node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "audit:check": "npm audit --audit-level=high"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.26.0",
-    "zod": "^3.23.0"
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^3.25.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -30,6 +31,15 @@
     "url": "git+https://github.com/rachitkumarrastogi/unity-mcp-server.git"
   },
   "overrides": {
-    "ajv": "8.18.0"
+    "@hono/node-server": "2.1.0",
+    "ajv": "8.20.0",
+    "body-parser": "2.3.0",
+    "esbuild": "0.28.1",
+    "express-rate-limit": "8.6.2",
+    "fast-uri": "4.1.2",
+    "hono": "4.13.0",
+    "ip-address": "10.4.0",
+    "path-to-regexp": "8.4.2",
+    "qs": "6.15.3"
   }
 }
