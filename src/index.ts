@@ -8,6 +8,7 @@ import { resolve } from "node:path";
 import { z } from "zod";
 import * as R from "./readers/index.js";
 import { searchToolsCatalog } from "./tools-catalog.js";
+import { truncateText } from "./readers/helpers.js";
 
 function getProjectRoot(): string {
   const env = process.env.UNITY_PROJECT_PATH;
@@ -25,7 +26,7 @@ async function main() {
 
   const server = new McpServer({
     name: "unity-mcp-server",
-    version: "1.6.3",
+    version: "1.6.4",
   });
 
   const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
@@ -71,12 +72,12 @@ async function main() {
     },
     async (args: unknown) => {
       const include = (args as { include_repo_understanding?: boolean })?.include_repo_understanding ?? false;
-      let content = R.readFileSafe(projectRoot, ".agents", "AGENT.md") ?? "(No .agents/AGENT.md found)";
+      let content = R.readTextCapped(projectRoot, ".agents", "AGENT.md") ?? "(No .agents/AGENT.md found)";
       if (include) {
-        const rep = R.readFileSafe(projectRoot, "REPO_UNDERSTANDING.md");
+        const rep = R.readTextCapped(projectRoot, "REPO_UNDERSTANDING.md");
         if (rep) content += "\n\n---\n\n# REPO_UNDERSTANDING.md\n\n" + rep;
       }
-      return text(content);
+      return text(truncateText(content));
     }
   );
 
@@ -501,7 +502,7 @@ async function main() {
   server.registerTool("get_cloud_services_config", { description: "Get Unity Cloud / Unity Connect config if present.", inputSchema: {} }, async () => json(R.getCloudServicesConfig(projectRoot)));
   server.registerTool("get_package_dependency_graph", { description: "Get package dependency graph (nodes and edges from manifest + lock).", inputSchema: {} }, async () => json(R.getPackageDependencyGraph(projectRoot)));
   server.registerTool("list_package_samples", { description: "List Samples folders or sample paths under Packages.", inputSchema: {} }, async () => json(R.listPackageSamples(projectRoot)));
-  server.registerTool("list_unity_hub_projects", { description: "List Unity projects from Unity Hub (projects-v1.json). Does not require UNITY_PROJECT_PATH.", inputSchema: {} }, async () => json(R.listUnityHubProjects()));
+  server.registerTool("list_unity_hub_projects", { description: "List Unity Hub projects (basenames only by default; set UNITY_MCP_ALLOW_HUB_PATHS=1 for full paths). Does not require UNITY_PROJECT_PATH.", inputSchema: {} }, async () => json(R.listUnityHubProjects()));
 
   // --- 17. Render pipelines ---
   server.registerTool("list_render_pipelines", { description: "List render pipeline assets and volume profiles (URP/HDRP).", inputSchema: {} }, async () => json(R.listRenderPipelines(projectRoot)));

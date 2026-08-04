@@ -2,7 +2,7 @@
  * Scenes & prefabs readers.
  */
 
-import { readFileSafe, listFilesRecursive, getAssetPathByGuid, ASSETS } from "./helpers.js";
+import { readFileSafe, listFilesRecursive, getAssetPathByGuid, resolveUnderRoot, ASSETS } from "./helpers.js";
 import { getSceneReferencedAssets } from "./assets.js";
 import { join } from "node:path";
 
@@ -32,6 +32,7 @@ export function getPrefabs(root: string, pathPrefix?: string): string[] {
   let files = listFilesRecursive(root, ASSETS, { ext: ".prefab" });
   if (pathPrefix) {
     const prefix = pathPrefix.startsWith("Assets/") ? pathPrefix : join(ASSETS, pathPrefix);
+    if (!resolveUnderRoot(root, prefix)) return [];
     files = files.filter((f) => f.startsWith(prefix + "/") || f.startsWith(prefix + "\\"));
   }
   return files;

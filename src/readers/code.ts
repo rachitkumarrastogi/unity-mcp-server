@@ -2,9 +2,8 @@
  * Code & assemblies readers.
  */
 
-import { readJsonSafe, readFileSafe, listFilesRecursive, ASSETS } from "./helpers.js";
+import { readJsonSafe, readFileSafe, listFilesRecursive, literalRegExp, wildcardRegExp, resolveUnderRoot, ASSETS } from "./helpers.js";
 import { join } from "node:path";
-import { existsSync } from "node:fs";
 
 export interface AsmDefInfo {
   path: string;
@@ -37,16 +36,21 @@ export function listScripts(root: string, folderPrefix?: string): string[] {
   let files = listFilesRecursive(root, ASSETS, { ext: ".cs", excludeMeta: true });
   if (folderPrefix) {
     const prefix = folderPrefix.startsWith("Assets/") ? folderPrefix : join(ASSETS, folderPrefix);
+    if (!resolveUnderRoot(root, prefix)) return [];
     files = files.filter((f) => f.startsWith(prefix + "/") || f.startsWith(prefix + "\\"));
   }
   return files;
 }
 
-/** Simple grep for type/namespace in .cs file content. */
+/** Simple grep for type/namespace in .cs file content (ReDoS-safe: literal / wildcard only). */
 export function findScriptsByContent(root: string, pattern: "MonoBehaviour" | "ScriptableObject" | string, namespaceFilter?: string): string[] {
   const files = listScripts(root);
-  const re = new RegExp(pattern, "i");
-  const nsRe = namespaceFilter ? new RegExp(namespaceFilter.replace(/\*/g, ".*"), "i") : null;
+  const re = literalRegExp(pattern, "i");
+  if (!re) return [];
+  const nsRe = namespaceFilter
+    ? (namespaceFilter.includes("*") ? wildcardRegExp(namespaceFilter, "i") : literalRegExp(namespaceFilter, "i"))
+    : null;
+  if (namespaceFilter && !nsRe) return [];
   const out: string[] = [];
   for (const rel of files) {
     const content = readFileSafe(root, rel);
@@ -75,7 +79,7 @@ export function listVisualScriptingAssets(root: string): string[] {
   const vsPaths = ["Assets/Ludiq", "Assets/Unity.VisualScripting", "Packages/com.unity.visualscripting"];
   const out: string[] = [];
   for (const dir of vsPaths) {
-    if (existsSync(join(root, dir))) out.push(...listFilesRecursive(root, dir, { ext: ".asset" }));
+    if (resolveUnderRoot(root, dir)) out.push(...listFilesRecursive(root, dir, { ext: ".asset" }));
   }
   return [...new Set(out)].slice(0, 100);
 }

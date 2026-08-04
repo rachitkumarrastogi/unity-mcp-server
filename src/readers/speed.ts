@@ -3,14 +3,13 @@
  */
 
 import { statSync } from "node:fs";
-import { join } from "node:path";
 import { listScripts, getAssemblyDefinitions, getAssemblyDependencyGraph } from "./code.js";
 import { getPrefabs, getAllScenes } from "./scenes.js";
 import { getMaterials } from "./materials.js";
 import { getAnimatorControllers, getAnimationClips } from "./animation.js";
 import { getPackages, getBuildScenes, getProjectVersion } from "./project.js";
 import { getSceneReferencedAssets, getBrokenScriptRefs, getPrefabDependencies, listLargeAssets } from "./assets.js";
-import { readFileSafe } from "./helpers.js";
+import { readFileSafe, resolveUnderRoot } from "./helpers.js";
 
 /** Project stats in one call (script count, prefab count, etc.). */
 export function getProjectStats(root: string): Record<string, number> {
@@ -117,7 +116,8 @@ export function getBuildSizeEstimate(
   let totalSizeBytes = 0;
   const sizes: { path: string; sizeMb: number }[] = [];
   for (const rel of allPaths) {
-    const full = join(root, rel);
+    const full = resolveUnderRoot(root, rel);
+    if (!full) continue;
     try {
       const size = statSync(full).size;
       totalSizeBytes += size;

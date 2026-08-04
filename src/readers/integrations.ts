@@ -2,9 +2,9 @@
  * Third-party integrations readers.
  */
 
-import { readdirSync, existsSync } from "node:fs";
+import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { listFilesRecursive, readFileSafe, ASSETS } from "./helpers.js";
+import { listFilesRecursive, readFileSafe, resolveUnderRoot, ASSETS } from "./helpers.js";
 import { getPackages } from "./project.js";
 
 export function getPlayFabConfig(root: string): { titleId?: string; configPaths: string[] } {
@@ -24,7 +24,7 @@ export function getPlayFabConfig(root: string): { titleId?: string; configPaths:
 
 export function listFigmaRelatedAssets(root: string): string[] {
   const figmaDir = join(ASSETS, "Figma");
-  if (existsSync(join(root, figmaDir))) return listFilesRecursive(root, figmaDir);
+  if (resolveUnderRoot(root, figmaDir)) return listFilesRecursive(root, figmaDir);
   return listFilesRecursive(root, ASSETS).filter((p) => p.toLowerCase().includes("figma"));
 }
 
@@ -47,8 +47,9 @@ export function getSteamConfig(root: string): { steamAppIdTxt?: string; steamwor
   const appId = readFileSafe(root, "steam_appid.txt");
   let steamworksPath: string | undefined;
   const plug = join(ASSETS, "Plugins");
-  if (existsSync(join(root, plug))) {
-    const entries = readdirSync(join(root, plug));
+  const plugAbs = resolveUnderRoot(root, plug);
+  if (plugAbs) {
+    const entries = readdirSync(plugAbs);
     if (entries.some((e) => e.toLowerCase().includes("steam"))) steamworksPath = join(plug, entries.find((e) => e.toLowerCase().includes("steam"))!);
   }
   return { steamAppIdTxt: appId ? "steam_appid.txt" : undefined, steamworksPath };
@@ -56,8 +57,8 @@ export function getSteamConfig(root: string): { steamAppIdTxt?: string; steamwor
 
 export function getDiscordConfig(root: string): { sdkPath?: string } {
   const plug = join(ASSETS, "Plugins");
-  const full = join(root, plug);
-  if (!existsSync(full)) return {};
+  const full = resolveUnderRoot(root, plug);
+  if (!full) return {};
   const entries = readdirSync(full);
   const discord = entries.find((e) => e.toLowerCase().includes("discord"));
   return discord ? { sdkPath: join(plug, discord) } : {};
@@ -94,7 +95,7 @@ export function listSpeedTreeAssets(root: string): string[] {
 
 export function listLottieAssets(root: string): string[] {
   const lottieDir = join(ASSETS, "Lottie");
-  if (existsSync(join(root, lottieDir))) return listFilesRecursive(root, lottieDir, { ext: ".json" });
+  if (resolveUnderRoot(root, lottieDir)) return listFilesRecursive(root, lottieDir, { ext: ".json" });
   return listFilesRecursive(root, ASSETS, { ext: ".json" }).filter((p) => p.toLowerCase().includes("lottie"));
 }
 

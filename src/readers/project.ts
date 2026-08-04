@@ -5,7 +5,7 @@
 import { readdirSync, statSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir, platform } from "node:os";
-import { readJsonSafe, readFileSafe, parseUnityKeyValue, listFilesRecursive, ASSETS, PROJECT_SETTINGS, PACKAGES } from "./helpers.js";
+import { readJsonSafe, readFileSafe, readTextCapped, parseUnityKeyValue, listFilesRecursive, ASSETS, PROJECT_SETTINGS, PACKAGES } from "./helpers.js";
 
 export interface PackageInfo {
   name: string;
@@ -101,7 +101,7 @@ export function getProjectVersion(root: string): string {
 }
 
 export function getChangelog(root: string): string | null {
-  return readFileSafe(root, "CHANGELOG.md") || readFileSafe(root, "CHANGELOG") || readFileSafe(root, "changelog.md");
+  return readTextCapped(root, "CHANGELOG.md") || readTextCapped(root, "CHANGELOG") || readTextCapped(root, "changelog.md");
 }
 
 export function getPhysicsSettings(root: string): { dynamics?: Record<string, string>; physics2d?: Record<string, string> } {
@@ -288,10 +288,11 @@ export function listPackageSamples(root: string): { packagePath: string; sampleP
   return out.slice(0, 100);
 }
 
-/** List Unity projects from Unity Hub's projects list (if available). Paths are OS-specific. */
+/** List Unity Hub projects. Full absolute paths are redacted unless UNITY_MCP_ALLOW_HUB_PATHS=1. */
 export function listUnityHubProjects(): { path: string; name?: string; source: string }[] {
   const home = homedir();
   const out: { path: string; name?: string; source: string }[] = [];
+  const allowFullPaths = process.env.UNITY_MCP_ALLOW_HUB_PATHS === "1";
   const candidates: string[] = [];
   if (platform() === "darwin") {
     candidates.push(join(home, "Library", "Application Support", "Unity Hub", "projects-v1.json"));
@@ -312,8 +313,15 @@ export function listUnityHubProjects(): { path: string; name?: string; source: s
       if (Array.isArray(list)) {
         for (const item of list) {
           const rec = item as { path?: string; name?: string; projectPath?: string };
-          const path = rec.path ?? rec.projectPath;
-          if (path && typeof path === "string") out.push({ path, name: rec.name, source: p });
+          const fullPath = rec.path ?? rec.projectPath;
+          if (fullPath && typeof fullPath === "string") {
+            const base = fullPath.split(/[/\\]/).filter(Boolean).pop() || fullPath;
+            out.push({
+              path: allowFullPaths ? fullPath : base,
+              name: rec.name ?? base,
+              source: allowFullPaths ? p : "Unity Hub (path redacted; set UNITY_MCP_ALLOW_HUB_PATHS=1 for full paths)",
+            });
+          }
         }
         break;
       }

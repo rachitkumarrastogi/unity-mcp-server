@@ -2,13 +2,14 @@
  * Materials & shaders readers.
  */
 
-import { listFilesRecursive, readFileSafe, ASSETS, PACKAGES } from "./helpers.js";
+import { listFilesRecursive, readFileSafe, resolveUnderRoot, ASSETS, PACKAGES } from "./helpers.js";
 import { join } from "node:path";
 
 export function getMaterials(root: string, folder?: string): { path: string; shader?: string }[] {
   let files = listFilesRecursive(root, ASSETS, { ext: ".mat" });
   if (folder) {
     const prefix = folder.startsWith("Assets/") ? folder : join(ASSETS, folder);
+    if (!resolveUnderRoot(root, prefix)) return [];
     files = files.filter((f) => f.startsWith(prefix + "/") || f.startsWith(prefix + "\\"));
   }
   return files.map((path) => {

@@ -2,18 +2,18 @@
  * Assets & references readers.
  */
 
-import { existsSync, readdirSync, statSync, readFileSync } from "node:fs";
+import { readdirSync, statSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { listFilesRecursive, readFileSafe, getAssetPathByGuid, getGuidFromMeta, findReferencesToGuid, ASSETS } from "./helpers.js";
+import { listFilesRecursive, readFileSafe, getAssetPathByGuid, getGuidFromMeta, findReferencesToGuid, resolveUnderRoot, wildcardRegExp, ASSETS } from "./helpers.js";
 import { findScriptsByContent } from "./code.js";
 
 export function getAssetFolderTree(root: string, maxDepth: number = 4): Record<string, string[]> {
-  const assetsDir = join(root, ASSETS);
-  if (!existsSync(assetsDir)) return {};
+  if (!resolveUnderRoot(root, ASSETS)) return {};
   const result: Record<string, string[]> = {};
   function walk(dir: string, depth: number): string[] {
     if (depth > maxDepth) return [];
-    const full = join(root, dir);
+    const full = resolveUnderRoot(root, dir);
+    if (!full) return [];
     let entries: string[];
     try {
       entries = readdirSync(full);
@@ -22,9 +22,10 @@ export function getAssetFolderTree(root: string, maxDepth: number = 4): Record<s
     }
     const children: string[] = [];
     for (const e of entries) {
-      if (e.startsWith(".")) continue;
+      if (e.startsWith(".") || e === ".." || e === ".") continue;
       const rel = join(dir, e);
-      const fullPath = join(root, rel);
+      const fullPath = resolveUnderRoot(root, rel);
+      if (!fullPath) continue;
       if (statSync(fullPath).isDirectory()) {
         children.push(rel + "/");
         if (depth < maxDepth) walk(rel, depth + 1);
@@ -40,26 +41,32 @@ export function getAssetFolderTree(root: string, maxDepth: number = 4): Record<s
 }
 
 export function listAssetsByExtension(root: string, ext: string, folder?: string): string[] {
+  // Confine optional folder under Assets (blocks ../ escape).
   const dir = folder ? join(ASSETS, folder) : ASSETS;
+  if (!resolveUnderRoot(root, dir)) return [];
   return listFilesRecursive(root, dir, { ext: ext.toLowerCase() });
 }
 
 export function listLargeAssets(root: string, minSizeMb: number = 5): { path: string; sizeMb: number }[] {
   const out: { path: string; sizeMb: number }[] = [];
   const threshold = minSizeMb * 1024 * 1024;
+  if (!resolveUnderRoot(root, ASSETS)) return out;
   const stack: string[] = [ASSETS];
   while (stack.length) {
     const d = stack.pop()!;
-    const fullD = join(root, d);
+    const fullD = resolveUnderRoot(root, d);
+    if (!fullD) continue;
     try {
       for (const e of readdirSync(fullD)) {
+        if (e === "." || e === "..") continue;
         const rel = join(d, e);
-        const fullPath = join(root, rel);
+        const fullPath = resolveUnderRoot(root, rel);
+        if (!fullPath) continue;
         if (statSync(fullPath).isDirectory()) {
           if (!e.startsWith(".")) stack.push(rel);
         } else {
           const size = statSync(fullPath).size;
-          if (size >= threshold) out.push({ path: rel, sizeMb: Math.round((size / 1024 / 1024) * 100) / 100 });
+          if (size >= threshold) out.push({ path: rel.split(/[/\\]/).join("/"), sizeMb: Math.round((size / 1024 / 1024) * 100) / 100 });
         }
       }
     } catch {
@@ -104,14 +111,18 @@ export function getPrefabDependencies(root: string, prefabPath: string): string[
 export function getBrokenScriptRefs(root: string): { assetPath: string; missingScriptGuid: string }[] {
   const exts = [".prefab", ".unity"];
   const scriptGuids = new Set<string>();
+  if (!resolveUnderRoot(root, ASSETS)) return [];
   const stack: string[] = [ASSETS];
   while (stack.length) {
     const d = stack.pop()!;
-    const fullD = join(root, d);
+    const fullD = resolveUnderRoot(root, d);
+    if (!fullD) continue;
     try {
       for (const e of readdirSync(fullD)) {
+        if (e === "." || e === "..") continue;
         const rel = join(d, e);
-        const fullPath = join(root, rel);
+        const fullPath = resolveUnderRoot(root, rel);
+        if (!fullPath) continue;
         if (statSync(fullPath).isDirectory()) {
           if (!e.startsWith(".")) stack.push(rel);
         } else if (e.endsWith(".meta")) {
@@ -194,29 +205,32 @@ export function listLightingSettingsAssets(root: string): string[] {
   });
 }
 
-/** Search Assets (and optionally Packages) by file or folder name pattern (e.g. "Player", "*Menu*"). */
+/** Search Assets (and optionally Packages) by file or folder name pattern (e.g. "Player", "*Menu*"). ReDoS-safe. */
 export function searchAssetsByName(root: string, namePattern: string, includePackages?: boolean): string[] {
-  const pattern = namePattern.replace(/\*/g, ".*").toLowerCase();
-  const re = new RegExp(pattern, "i");
+  const re = wildcardRegExp(namePattern.includes("*") ? namePattern : `*${namePattern}*`, "i");
+  if (!re) return [];
   const out: string[] = [];
   const dirs = includePackages ? [ASSETS, "Packages"] : [ASSETS];
   for (const dir of dirs) {
-    const full = join(root, dir);
-    if (!existsSync(full) || !statSync(full).isDirectory()) continue;
+    if (!resolveUnderRoot(root, dir)) continue;
     const stack: string[] = [dir];
     while (stack.length) {
       const d = stack.pop()!;
-      const fullD = join(root, d);
+      const fullD = resolveUnderRoot(root, d);
+      if (!fullD) continue;
       try {
         for (const e of readdirSync(fullD)) {
+          if (e === "." || e === "..") continue;
           const rel = join(d, e);
-          const fullPath = join(root, rel);
+          const fullPath = resolveUnderRoot(root, rel);
+          if (!fullPath) continue;
+          const relNorm = rel.split(/[/\\]/).join("/");
           if (statSync(fullPath).isDirectory()) {
             if (!e.startsWith(".") && e !== "node_modules") stack.push(rel);
-            if (re.test(e)) out.push(rel + "/");
+            if (re.test(e)) out.push(relNorm + "/");
           } else {
             const nameWithoutMeta = e.endsWith(".meta") ? e.slice(0, -5) : e;
-            if (re.test(nameWithoutMeta) || re.test(rel)) out.push(rel);
+            if (re.test(nameWithoutMeta) || re.test(relNorm)) out.push(relNorm);
           }
         }
       } catch {
@@ -306,16 +320,18 @@ export function listScriptableObjectAssets(root: string): string[] {
 /** List prefabs/scenes/materials that reference a GUID that does not exist in the project (any missing ref, not only script). */
 export function getBrokenAssetRefs(root: string): { assetPath: string; missingGuid: string }[] {
   const validGuids = new Set<string>();
+  if (!resolveUnderRoot(root, ASSETS)) return [];
   const stack: string[] = [ASSETS];
-  const fullRoot = join(root, ASSETS);
-  if (!existsSync(fullRoot)) return [];
   while (stack.length) {
     const d = stack.pop()!;
-    const fullD = join(root, d);
+    const fullD = resolveUnderRoot(root, d);
+    if (!fullD) continue;
     try {
       for (const e of readdirSync(fullD)) {
+        if (e === "." || e === "..") continue;
         const rel = join(d, e);
-        const fullPath = join(root, rel);
+        const fullPath = resolveUnderRoot(root, rel);
+        if (!fullPath) continue;
         if (statSync(fullPath).isDirectory()) {
           if (!e.startsWith(".")) stack.push(rel);
         } else if (e.endsWith(".meta")) {

@@ -3,11 +3,11 @@
  * No Unity Editor required.
  */
 
-import { readdirSync, existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readdirSync, existsSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { join, relative, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { readFileSafe, listFilesRecursive, ASSETS } from "./helpers.js";
+import { readFileSafe, listFilesRecursive, truncateText, ASSETS } from "./helpers.js";
 import { getPackages } from "./project.js";
 import { listScripts } from "./code.js";
 import { listAssetsByExtension } from "./assets.js";
@@ -262,7 +262,16 @@ export function listBundledAiSkills(): Array<{ id: string; name: string; descrip
 
 export function readBundledAiSkill(skillId: string): { id: string; content: string } | null {
   const safe = skillId.replace(/[^a-z0-9-]/gi, "");
+  if (!safe) return null;
   const skillPath = join(SKILLS_DIR, safe, "SKILL.md");
-  if (!existsSync(skillPath)) return null;
-  return { id: safe, content: readFileSync(skillPath, "utf8") };
+  try {
+    if (!existsSync(SKILLS_DIR) || !existsSync(skillPath)) return null;
+    const realSkills = realpathSync(SKILLS_DIR);
+    const realSkill = realpathSync(skillPath);
+    const rel = relative(realSkills, realSkill);
+    if (rel.startsWith("..") || isAbsolute(rel) || !statSync(realSkill).isFile()) return null;
+    return { id: safe, content: truncateText(readFileSync(realSkill, "utf8")) };
+  } catch {
+    return null;
+  }
 }

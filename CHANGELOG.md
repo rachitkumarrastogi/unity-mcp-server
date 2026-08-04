@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.4] - 2026-08-04
+
+### Security
+
+- **Path confinement:** `readFileSafe` / `listFilesRecursive` and all FS walks now reject `../`, absolute segments, and symlink escapes outside `UNITY_PROJECT_PATH` (`resolveUnderRoot` + `realpath`).
+- **ReDoS:** search/pattern tools use escaped literal / wildcard compilers (`literalRegExp` / `wildcardRegExp`) with length caps.
+- **Hub disclosure:** `list_unity_hub_projects` redacts absolute paths unless `UNITY_MCP_ALLOW_HUB_PATHS=1`.
+- **Size caps:** agent docs, repo docs, changelog, and bundled skills truncated at 200KB.
+
+---
+
 ## [1.6.3] - 2026-08-04
 
 ### Security

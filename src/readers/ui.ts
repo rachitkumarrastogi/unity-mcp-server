@@ -2,9 +2,7 @@
  * TextMeshPro & UI Toolkit readers.
  */
 
-import { listFilesRecursive, ASSETS } from "./helpers.js";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { listFilesRecursive, resolveUnderRoot, ASSETS } from "./helpers.js";
 
 export function listTmpFonts(root: string): string[] {
   return listFilesRecursive(root, ASSETS, { ext: ".asset" }).filter((p) => p.toLowerCase().includes("tmp") || p.toLowerCase().includes("font"));
@@ -12,7 +10,7 @@ export function listTmpFonts(root: string): string[] {
 
 export function getTmpSettingsPath(root: string): string | null {
   const paths = ["Assets/Resources/TMP Settings.asset", "Assets/TextMesh Pro/Resources/TMP Settings.asset"];
-  for (const p of paths) if (existsSync(join(root, p))) return p;
+  for (const p of paths) if (resolveUnderRoot(root, p)) return p;
   return null;
 }
 

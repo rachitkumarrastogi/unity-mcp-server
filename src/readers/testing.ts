@@ -2,7 +2,7 @@
  * Testing & docs readers.
  */
 
-import { readFileSafe } from "./helpers.js";
+import { readTextCapped } from "./helpers.js";
 import { getAssemblyDefinitions, type AsmDefInfo } from "./code.js";
 
 const DOC_FILES = ["README.md", "CONTRIBUTING.md", ".cursorrules", "CODING_STANDARDS.md", "STYLE.md"];
@@ -10,7 +10,7 @@ const DOC_FILES = ["README.md", "CONTRIBUTING.md", ".cursorrules", "CODING_STAND
 export function getRepoDocs(root: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const name of DOC_FILES) {
-    const s = readFileSafe(root, name);
+    const s = readTextCapped(root, name);
     if (s) out[name] = s;
   }
   return out;
