@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/unity-mcp-server.svg)](https://www.npmjs.com/package/unity-mcp-server) [![MCP Registry](https://img.shields.io/badge/MCP_Registry-View_this_server-6e7681?style=flat-square&labelColor=24292f)](https://registry.modelcontextprotocol.io/?q=unity-mcp-server)
 
 <p align="center">
-  <img src="assets/unity-mcp-server-diagram.png" alt="Cursor / IDE → Unity MCP Server → Unity Project" width="720">
+  <img src="https://raw.githubusercontent.com/rachitkumarrastogi/unity-mcp-server/main/assets/unity-mcp-server-diagram.png" alt="Cursor / IDE → Unity MCP Server → Unity Project" width="720">
 </p>
 
 Your IDE talks to this server; the server reads your Unity project folder and answers with project info, build scenes, scripts, prefabs, and more — so the AI can help without opening the Editor.
@@ -315,8 +315,8 @@ Expand a category below to see the tools it includes.
 | `find_ai_related_scripts` | C# with Sentis, ML-Agents, NavMesh, behavior trees, LLM APIs | *"Which scripts use ML-Agents or Sentis?"* |
 | `list_ml_agents_training_configs` | ML-Agents trainer YAML configs | *"Find ML-Agents training configs"* |
 | `list_ai_prompt_or_config_assets` | Prompt/RAG-like JSON or MD under Assets | *"Any LLM prompt assets in Assets?"* |
-| `list_ai_skills` | Bundled Unity AI workflow skills | *"List Unity AI skills"* |
-| `read_ai_skill` | Read skill by id (`unity-ml-agents`, `unity-sentis-inference`, …) | *"Read the unity-ai-audit skill"* |
+| `list_ai_skills` | Bundled workflow skills (25: AI, shipping, content, integrations) | *"List Unity AI skills"* |
+| `read_ai_skill` | Read skill by id (e.g. `unity-release-readiness`, `unity-ml-agents`) | *"Read the unity-ai-audit skill"* |
 
 </details>
 

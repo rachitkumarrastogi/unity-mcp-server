@@ -24,12 +24,39 @@ Run `get_ai_stack_summary` with `include_prompt_assets: true`.
 
 ## Bundled skills
 
-Call `list_ai_skills` then `read_ai_skill` for focused workflows:
+Call `list_ai_skills` then `read_ai_skill` for focused workflows.
 
+### AI / ML
 - `unity-ml-agents`
 - `unity-sentis-inference`
 - `unity-navmesh-npc`
 - `unity-llm-integration`
+
+### Shipping / eng
+- `unity-release-readiness`
+- `unity-build-size-optimization`
+- `unity-broken-refs-triage`
+- `unity-addressables-shipping`
+- `unity-prefab-architecture`
+- `unity-input-system-setup`
+- `unity-ci-github-actions`
+- `unity-assembly-architecture`
+
+### Content / QA
+- `unity-urp-hdrp-render-audit`
+- `unity-animation-controller-audit`
+- `unity-2d-tilemap-sprites`
+- `unity-ui-toolkit-tmp`
+- `unity-audio-mixer-fmod-wwise`
+- `unity-qa-scene-coverage`
+
+### Platforms / integrations
+- `unity-playfab-backend`
+- `unity-firebase-mobile`
+- `unity-steam-discord-presence`
+- `unity-ads-analytics-crash`
+- `unity-dots-subscenes`
+- `unity-xr-vr-audit`
 
 ## Report template
 
@@ -38,6 +65,4 @@ Call `list_ai_skills` then `read_ai_skill` for focused workflows:
 - Packages: ...
 - Models: N ONNX, ...
 - Scripts: N files (top labels: ...)
-- Training configs: ...
-- Risks: secrets in client?, build size, missing packages
 ```

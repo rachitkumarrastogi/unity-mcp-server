@@ -1,4 +1,4 @@
-# Source and tooling (consumers only need dist/)
+# Source and tooling (consumers only need dist/ + skills/)
 src/
 *.ts
 tsconfig.json
@@ -6,7 +6,12 @@ tsconfig.json
 # Docs live in the repo for contributors; not needed in the published package
 docs/
 
-# Development and local config
+# Huge marketing diagram (~4.5MB) — keep in git for GitHub README, exclude from npm
+assets/
+
+# CI / local auth — never ship
+.github/
 .env
 *.log
 .mcpregistry_*
+.DS_Store
