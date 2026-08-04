@@ -315,8 +315,8 @@ Expand a category below to see the tools it includes.
 | `find_ai_related_scripts` | C# with Sentis, ML-Agents, NavMesh, behavior trees, LLM APIs | *"Which scripts use ML-Agents or Sentis?"* |
 | `list_ml_agents_training_configs` | ML-Agents trainer YAML configs | *"Find ML-Agents training configs"* |
 | `list_ai_prompt_or_config_assets` | Prompt/RAG-like JSON or MD under Assets | *"Any LLM prompt assets in Assets?"* |
-| `list_ai_skills` | Bundled workflow skills (25: AI, shipping, content, integrations) | *"List Unity AI skills"* |
-| `read_ai_skill` | Read skill by id (e.g. `unity-release-readiness`, `unity-ml-agents`) | *"Read the unity-ai-audit skill"* |
+| `list_ai_skills` | Bundled skills by category (28: ai-ml, shipping, content, performance, …) | *"List Unity skills"* |
+| `read_ai_skill` | Read skill by id (e.g. `unity-runtime-performance`, `unity-model-agnostic-inference`) | *"Read the unity-ai-audit skill"* |
 
 </details>
 

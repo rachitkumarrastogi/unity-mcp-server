@@ -95,7 +95,7 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 
 **Example prompts:** *"Audit the AI stack"* · *"List ONNX models and ML-Agents configs"* · *"Which scripts call OpenAI?"* · *"Read unity-sentis-inference skill"* · *"Prefabs with NavMeshAgent"*
 
-**Bundled skills** (via `read_ai_skill`): `unity-ai-audit`, `unity-ml-agents`, `unity-sentis-inference`, `unity-navmesh-npc`, `unity-llm-integration`
+**Bundled skills** (via `list_ai_skills` / `read_ai_skill`): categorized under `skills/` (`ai-ml`, `shipping`, `content`, `performance`, `integrations`, `platform`). Highlights: `unity-model-agnostic-inference`, `unity-runtime-performance`, `unity-ai-audit`.
 
 ---
 

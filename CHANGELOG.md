@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.6] - 2026-08-04
+
+### Added
+
+- **Model-agnostic inference** skill: `unity-model-agnostic-inference`.
+- **Performance** skills: `unity-runtime-performance`, `unity-memory-asset-pressure` (with existing build-size skill).
+
+### Changed
+
+- **Skills organized by category:** `ai-ml/`, `shipping/`, `content/`, `performance/`, `integrations/`, `platform/` + `skills/README.md` index.
+- Skill loader recursively discovers skills; `list_ai_skills` now includes `category`.
+
+---
+
 ## [1.6.5] - 2026-08-04
 
 ### Added

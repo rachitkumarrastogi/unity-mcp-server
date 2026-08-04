@@ -26,7 +26,7 @@ async function main() {
 
   const server = new McpServer({
     name: "unity-mcp-server",
-    version: "1.6.5",
+    version: "1.6.6",
   });
 
   const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
@@ -717,7 +717,7 @@ async function main() {
   server.registerTool(
     "list_ai_skills",
     {
-      description: "List bundled Unity AI agent skills shipped with unity-mcp-server (ML-Agents, Sentis, NavMesh NPC, LLM integration, audit workflows).",
+      description: "List bundled workflow skills (categorized: ai-ml, shipping, content, performance, integrations, platform). Model-agnostic and vendor-specific.",
       inputSchema: {},
     },
     async () => json(R.listBundledAiSkills())
@@ -726,8 +726,8 @@ async function main() {
   server.registerTool(
     "read_ai_skill",
     {
-      description: "Read a bundled Unity AI skill by id (from list_ai_skills). Teaches agents how to work on Unity AI features.",
-      inputSchema: { skill_id: z.string().describe("Skill folder id, e.g. unity-ml-agents") },
+      description: "Read a bundled skill by id from list_ai_skills (e.g. unity-runtime-performance, unity-model-agnostic-inference).",
+      inputSchema: { skill_id: z.string().describe("Skill folder id, e.g. unity-ml-agents or unity-runtime-performance") },
     },
     async (args: unknown) => {
       const skill = R.readBundledAiSkill((args as { skill_id: string }).skill_id);

@@ -130,8 +130,8 @@ export const TOOLS_CATALOG: ToolEntry[] = [
   { name: "list_ai_prompt_or_config_assets", description: "Prompt/RAG-like JSON or MD under Assets", category: "AI & ML" },
   { name: "list_ml_agents_training_configs", description: "ML-Agents trainer YAML configs", category: "AI & ML" },
   { name: "get_ai_stack_summary", description: "One-shot AI stack: packages, models, scripts, configs", category: "AI & ML" },
-  { name: "list_ai_skills", description: "Bundled Unity AI agent skills (workflows)", category: "AI & ML" },
-  { name: "read_ai_skill", description: "Read bundled skill by id (unity-ml-agents, etc.)", category: "AI & ML" },
+  { name: "list_ai_skills", description: "Bundled skills by category (ai-ml, shipping, content, performance, …)", category: "AI & ML" },
+  { name: "read_ai_skill", description: "Read skill by id (e.g. unity-runtime-performance, unity-model-agnostic-inference)", category: "AI & ML" },
 ];
 
 export function searchToolsCatalog(query: string | undefined): { category: string; tools: ToolEntry[] }[] {

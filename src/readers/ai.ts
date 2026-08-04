@@ -238,39 +238,79 @@ export function getAiStackSummary(root: string, includePromptAssets: boolean): R
 const SERVER_ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const SKILLS_DIR = join(SERVER_ROOT, "skills");
 
-export function listBundledAiSkills(): Array<{ id: string; name: string; description: string }> {
-  if (!existsSync(SKILLS_DIR)) return [];
-  const entries = readdirSync(SKILLS_DIR, { withFileTypes: true });
-  const skills: Array<{ id: string; name: string; description: string }> = [];
+/** Category folder under skills/ (e.g. ai-ml, shipping). Leaf folder name is the skill id. */
+function findSkillMarkdownFiles(dir: string): Array<{ id: string; category: string; skillPath: string }> {
+  const out: Array<{ id: string; category: string; skillPath: string }> = [];
+  if (!existsSync(dir)) return out;
 
-  for (const ent of entries) {
-    if (!ent.isDirectory()) continue;
-    const skillPath = join(SKILLS_DIR, ent.name, "SKILL.md");
-    if (!existsSync(skillPath)) continue;
-    const raw = readFileSync(skillPath, "utf8");
-    const nameMatch = raw.match(/^name:\s*(.+)$/m);
-    const descMatch = raw.match(/^description:\s*>?-?\s*(.+)$/m);
-    skills.push({
-      id: ent.name,
-      name: nameMatch?.[1]?.trim() ?? ent.name,
-      description: descMatch?.[1]?.trim() ?? "Unity AI workflow skill",
-    });
-  }
+  const walk = (abs: string, category: string) => {
+    let entries;
+    try {
+      entries = readdirSync(abs, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const ent of entries) {
+      if (!ent.isDirectory() || ent.name.startsWith(".")) continue;
+      const child = join(abs, ent.name);
+      const skillMd = join(child, "SKILL.md");
+      if (existsSync(skillMd)) {
+        out.push({ id: ent.name, category: category || ent.name, skillPath: skillMd });
+      } else {
+        // Category directory — recurse one level (or deeper)
+        walk(child, category || ent.name);
+      }
+    }
+  };
 
-  return skills.sort((a, b) => a.id.localeCompare(b.id));
+  walk(dir, "");
+  return out;
 }
 
-export function readBundledAiSkill(skillId: string): { id: string; content: string } | null {
+export function listBundledAiSkills(): Array<{ id: string; name: string; description: string; category?: string }> {
+  const found = findSkillMarkdownFiles(SKILLS_DIR);
+  const skills: Array<{ id: string; name: string; description: string; category?: string }> = [];
+
+  for (const f of found) {
+    try {
+      const raw = readFileSync(f.skillPath, "utf8");
+      const nameMatch = raw.match(/^name:\s*(.+)$/m);
+      const descMatch = raw.match(/^description:\s*>?-?\s*(.+)$/m);
+      skills.push({
+        id: f.id,
+        name: nameMatch?.[1]?.trim() ?? f.id,
+        description: descMatch?.[1]?.trim() ?? "Unity workflow skill",
+        category: f.category,
+      });
+    } catch {
+      /* skip unreadable */
+    }
+  }
+
+  return skills.sort((a, b) => {
+    const c = (a.category || "").localeCompare(b.category || "");
+    return c !== 0 ? c : a.id.localeCompare(b.id);
+  });
+}
+
+export function readBundledAiSkill(skillId: string): { id: string; content: string; category?: string } | null {
   const safe = skillId.replace(/[^a-z0-9-]/gi, "");
   if (!safe) return null;
-  const skillPath = join(SKILLS_DIR, safe, "SKILL.md");
+
+  const match = findSkillMarkdownFiles(SKILLS_DIR).find((f) => f.id === safe);
+  if (!match) return null;
+
   try {
-    if (!existsSync(SKILLS_DIR) || !existsSync(skillPath)) return null;
+    if (!existsSync(SKILLS_DIR) || !existsSync(match.skillPath)) return null;
     const realSkills = realpathSync(SKILLS_DIR);
-    const realSkill = realpathSync(skillPath);
+    const realSkill = realpathSync(match.skillPath);
     const rel = relative(realSkills, realSkill);
     if (rel.startsWith("..") || isAbsolute(rel) || !statSync(realSkill).isFile()) return null;
-    return { id: safe, content: truncateText(readFileSync(realSkill, "utf8")) };
+    return {
+      id: safe,
+      category: match.category,
+      content: truncateText(readFileSync(realSkill, "utf8")),
+    };
   } catch {
     return null;
   }

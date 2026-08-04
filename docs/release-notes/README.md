@@ -4,6 +4,7 @@ Release notes are kept here for every version. Each file is named by version (e.
 
 | Version | Notes |
 |---------|--------|
+| [v1.6.6](./v1.6.6.md) | 2026-08-04 — Skills categorized; model-agnostic + performance skills (28 total) |
 | [v1.6.5](./v1.6.5.md) | 2026-08-04 — 20 new skills (25 total); shrink npm pack (exclude 4.5MB diagram) |
 | [v1.6.4](./v1.6.4.md) | 2026-08-04 — First-party hardening: path confinement, ReDoS-safe search, Hub redaction, size caps |
 | [v1.6.3](./v1.6.3.md) | 2026-08-04 — Revert Socket Registry overrides (unpopular-package quality hit) |
