@@ -182,14 +182,18 @@ export function listFilesRecursive(
   return out.sort();
 }
 
-/** Parse Unity YAML-like key-value (m_Key: value) from content. */
+/** Parse Unity YAML-like key-value (m_Key: value) from content. Bare block
+ * headers (e.g. `PlayerSettings:`) are skipped so they never swallow a key.
+ * Same-line indentation is tolerated since Unity indents block contents;
+ * spacing never crosses newlines. */
 export function parseUnityKeyValue(content: string): Record<string, string> {
   const out: Record<string, string> = {};
-  const re = /^(\w+):\s*(.*)$/gm;
+  const re = /^[ \t]*(\w+):[ \t]*(.*?)[ \t]*$/gm;
   let m: RegExpExecArray | null;
   while ((m = re.exec(content)) !== null) {
     const v = m[2].trim();
-    if (v && !v.startsWith("{") && !v.startsWith("[")) out[m[1]] = v;
+    if (!v || v.startsWith("{") || v.startsWith("[") || v.endsWith(":")) continue;
+    out[m[1]] = v;
   }
   return out;
 }

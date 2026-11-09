@@ -61,3 +61,15 @@ export * from "./ai.js";
 
 // Unity 6.x coverage (multiplayer, build profiles, physics, UGS, …)
 export * from "./unity6.js";
+
+// Execution insights (test results, Editor.log, build reports)
+export * from "./execution.js";
+
+// Unity AI native (Muse/Assistant/Inference/Building Blocks/LLM runtime)
+export * from "./unityai.js";
+
+// Deep shipping audits (Addressables dupes, shader variants, input/XR/Netcode/LOD/…)
+export * from "./shipping.js";
+
+// Optional live Editor bridge (opt-in localhost)
+export * from "./bridge.js";

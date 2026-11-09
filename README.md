@@ -49,7 +49,8 @@ Expand a category below to see the tools it includes.
 | [🎨 Materials & shaders](#materials-shaders) | [🎞️ Animation](#animation) | [🖼️ 2D & sprites](#2d-sprites) | [✨ Rendering](#rendering) |
 | [📝 TextMeshPro & UI](#textmeshpro-ui) | [🎮 Input](#input) | [🏷️ Tags & layers](#tags-layers) | [🌐 Addressables & localization](#addressables-localization) |
 | [🔊 Audio](#audio) | [🧪 Testing & docs](#testing-docs) | [🔄 CI & version control](#ci-version-control) | [🔌 Integrations](#integrations) |
-| [⚡ Speed & productivity](#speed) | [🔍 Meta](#meta) | [🤖 AI & ML](#ai-ml) | |
+| [⚡ Speed & productivity](#speed) | [🔍 Meta](#meta) | [🤖 AI & ML](#ai-ml) | [🧾 Execution insights](#execution-insights) |
+| [🚢 Shipping audits](#shipping-audits) | [🌉 Live bridge](#live-bridge) | | |
 
 ---
 
@@ -333,8 +334,56 @@ Expand a category below to see the tools it includes.
 | `find_ai_related_scripts` | C# with Sentis, ML-Agents, NavMesh, behavior trees, LLM APIs | *"Which scripts use ML-Agents or Sentis?"* |
 | `list_ml_agents_training_configs` | ML-Agents trainer YAML configs | *"Find ML-Agents training configs"* |
 | `list_ai_prompt_or_config_assets` | Prompt/RAG-like JSON or MD under Assets | *"Any LLM prompt assets in Assets?"* |
+| `get_unity_ai_stack` | Unity AI platform: Muse/Assistant/Inference/Building Blocks packages + settings | *"Audit the Unity AI platform setup"* |
+| `list_building_blocks` | Unity 6.3 LTS Building Blocks packages + sample assets | *"List Building Blocks in this project"* |
+| `list_inference_models` | On-device models: `.onnx`/`.nn`/`.sentis`/`.bytes` with model markers | *"List on-device inference models"* |
+| `get_llm_runtime_inventory` | In-game LLM patterns: HTTP/SSE/WebSocket/key handling (no secrets read) | *"Audit in-game LLM usage"* |
 | `list_ai_skills` | Bundled skills by Unity domain (39: scenes, multiplayer, build profiles, …) | *"List Unity skills"* |
 | `read_ai_skill` | Read skill by id (e.g. `unity-scenes-workflow`, `unity-multiplayer-netcode`) | *"Read the unity-ai-audit skill"* |
+
+</details>
+
+<details id="execution-insights">
+<summary><strong>🧾 Execution insights</strong></summary>
+
+| Tool | Description | Example prompt to type |
+|------|-------------|-------------------------|
+| `list_test_result_files` | Unity Test Runner XML results (NUnit/JUnit) in the project | *"List test result files"* |
+| `get_test_results_summary` | Totals passed/failed/skipped with failing test names | *"Summarize test results"* · *"Which tests are failing?"* |
+| `get_editor_log_errors` | Local Editor.log compile/runtime/test/build errors (machine-local) | *"Show Editor log errors"* |
+| `list_build_reports` | Saved build reports (BuildReport JSON/text, build logs) | *"List build reports"* |
+| `get_build_report_summary` | Size/errors/warnings from newest (or chosen) build report | *"Summarize the latest build report"* |
+
+</details>
+
+<details id="shipping-audits">
+<summary><strong>🚢 Shipping audits</strong></summary>
+
+| Tool | Description | Example prompt to type |
+|------|-------------|-------------------------|
+| `get_addressables_duplicates` | GUIDs in multiple groups + optional profile path notes | *"Find duplicate Addressables"* |
+| `get_shader_variant_risk` | Variant pragma counts, top shaders by material usage | *"Audit shader variant risk"* |
+| `get_input_conflicts` | Duplicate Input System bindings in the same map | *"Find input binding conflicts"* |
+| `get_xr_origin_validation` | XR rig/origin/interaction-manager markers per scene | *"Validate XR setup"* |
+| `scan_netcode_rpc` | ServerRpc/ClientRpc/NetworkVariable markers + ownership hints | *"Audit Netcode RPC usage"* |
+| `get_navmesh_bake_state` | Scenes with NavMesh markers, settings, agent scripts | *"Check NavMesh bake state"* |
+| `get_lod_occlusion_coverage` | LODGroup/occlusion markers per scene | *"Check LOD and occlusion coverage"* |
+| `get_texture_import_heaviness` | 2048+ caps, Read/Write textures, missing mipmaps, Crunch | *"Find heavy texture imports"* |
+| `get_audio_loudness_risk` | PCM vs Vorbis, streaming vs compressed, music candidates | *"Audit audio compression"* |
+| `get_timeline_balance` | Playables vs bound directors + Signal coverage | *"Check Timeline bindings"* |
+| `get_unused_assets_estimate` | Assets not referenced by build scenes (review only) | *"Estimate unused assets"* |
+
+</details>
+
+<details id="live-bridge">
+<summary><strong>🌉 Live bridge (opt-in)</strong></summary>
+
+| Tool | Description | Example prompt to type |
+|------|-------------|-------------------------|
+| `get_bridge_status` | Bridge status — disabled unless `UNITY_MCP_BRIDGE_URL`/`PORT` points at 127.0.0.1 | *"Is the live bridge enabled?"* |
+| `bridge_live_fetch` | Fetch live Editor state (`/hierarchy`, `/console`, …) — refused when disabled | *"Fetch live hierarchy"* |
+
+Bridge is localhost-only and read-first. Default install stays Editor-free; set `UNITY_MCP_BRIDGE_URL=http://127.0.0.1:8091` (or `UNITY_MCP_BRIDGE_PORT`) only when you run the companion Editor listener.
 
 </details>
 
@@ -429,6 +478,7 @@ Replace the paths with your actual paths. For **Claude Desktop**, add an entry u
 
 - **Run built:** `node dist/index.js`
 - **Run dev:** `npm run dev` or `npx tsx src/index.ts`
+- **Run tests:** `npm test` (builds, then runs Node's built-in test runner over `tests/`)
 
 ---
 

@@ -1,5 +1,6 @@
-# Source and tooling (consumers only need dist/ + skills/)
+# Source, tests and tooling (consumers only need dist/ + skills/)
 src/
+tests/
 *.ts
 tsconfig.json
 

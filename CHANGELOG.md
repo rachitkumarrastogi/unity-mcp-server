@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-11-09
+
+### Added
+
+- **Execution insights (5 tools, no Editor):** `list_test_result_files`, `get_test_results_summary` (NUnit/JUnit P/F/S + failing names), `get_editor_log_errors` (local Editor.log compile/runtime/test/build), `list_build_reports`, `get_build_report_summary` (size/errors from newest or chosen report).
+- **Unity AI native (4 tools):** `get_unity_ai_stack` (Muse/Assistant/Inference/Building Blocks), `list_building_blocks` (Unity 6.3 LTS samples), `list_inference_models` (`.onnx`/`.nn`/`.sentis`/`.bytes` markers), `get_llm_runtime_inventory` (HTTP/SSE/WebSocket/key-handling patterns; never reads secret values).
+- **Shipping audits (11 tools):** `get_addressables_duplicates`, `get_shader_variant_risk`, `get_input_conflicts`, `get_xr_origin_validation`, `scan_netcode_rpc`, `get_navmesh_bake_state`, `get_lod_occlusion_coverage`, `get_texture_import_heaviness`, `get_audio_loudness_risk`, `get_timeline_balance`, `get_unused_assets_estimate`.
+- **Live bridge (2 tools, opt-in localhost):** `get_bridge_status` (default disabled), `bridge_live_fetch` (`UNITY_MCP_BRIDGE_URL`/`PORT` on 127.0.0.1 only). Safe default unchanged: filesystem-only unless the user runs the companion Editor listener.
+- **Skills (3):** `unity-next-level-shipping`, `unity-execution-insights`, `unity-ai-native`.
+- **156 tools total** (was 134).
+
+### Changed
+
+- Bumped to 1.8.0 across `package.json`, `server.json`, `src/index.ts`; README gains Execution insights / Shipping audits / Live bridge tables; `TOOLS_BY_ROLE.md` refreshed to 156.
+
+---
+
 ## [1.7.0] - 2026-08-04
 
 ### Added

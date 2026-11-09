@@ -26,7 +26,7 @@ async function main() {
 
   const server = new McpServer({
     name: "unity-mcp-server",
-    version: "1.7.0",
+    version: "1.8.0",
   });
 
   const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
@@ -816,6 +816,230 @@ async function main() {
       if (!skill) return text(`Skill not found: ${(args as { skill_id: string }).skill_id}`);
       return text(skill.content);
     }
+  );
+
+  // --- Execution insights: Test Runner XML, Editor.log, build reports ---
+  server.registerTool(
+    "list_test_result_files",
+    {
+      description: "Find Unity Test Runner XML results (NUnit/JUnit) in the project. No Editor required.",
+      inputSchema: {},
+    },
+    async () => json(R.listTestResultFiles(projectRoot))
+  );
+
+  server.registerTool(
+    "get_test_results_summary",
+    {
+      description: "Summarize Test Runner XML: totals passed/failed/skipped per file with failing test names.",
+      inputSchema: {
+        max_files: z.number().optional().describe("Max result files to parse, default 10").default(10),
+      },
+    },
+    async (args: unknown) => json(R.getTestResultsSummary(projectRoot, (args as { max_files?: number })?.max_files ?? 10))
+  );
+
+  server.registerTool(
+    "get_editor_log_errors",
+    {
+      description: "Tail the local Unity Editor.log for compile/runtime/test/build errors. Machine-local only, never uploads.",
+      inputSchema: {
+        max_lines: z.number().optional().describe("Log tail lines to scan, default 600").default(600),
+        max_errors: z.number().optional().describe("Max errors to return, default 50").default(50),
+      },
+    },
+    async (args: unknown) => {
+      const a = (args as { max_lines?: number; max_errors?: number }) ?? {};
+      return json(R.getEditorLogErrors(projectRoot, a.max_lines ?? 600, a.max_errors ?? 50));
+    }
+  );
+
+  server.registerTool(
+    "list_build_reports",
+    {
+      description: "List saved build reports (BuildReport JSON/text, build logs) in the project.",
+      inputSchema: {},
+    },
+    async () => json(R.listBuildReports(projectRoot))
+  );
+
+  server.registerTool(
+    "get_build_report_summary",
+    {
+      description: "Summarize a build report: size, scenes, errors/warnings. Defaults to newest report.",
+      inputSchema: {
+        report_path: z.string().optional().describe("Report path from list_build_reports; omit for newest"),
+        top_n: z.number().optional().describe("Max entries per list, default 20").default(20),
+      },
+    },
+    async (args: unknown) => {
+      const a = (args as { report_path?: string; top_n?: number }) ?? {};
+      return json(R.getBuildReportSummary(projectRoot, a.report_path, a.top_n ?? 20));
+    }
+  );
+
+  // --- Unity AI native: Muse / Assistant / Inference Engine / Building Blocks / LLM runtime ---
+  server.registerTool(
+    "get_unity_ai_stack",
+    {
+      description: "Unity AI platform audit: Muse/Assistant/Inference packages, AI-related ProjectSettings, hints.",
+      inputSchema: {},
+    },
+    async () => json(R.getUnityAiStack(projectRoot))
+  );
+
+  server.registerTool(
+    "list_building_blocks",
+    {
+      description: "Unity 6.3 LTS Building Blocks: packages + sample assets with production-ready gameplay components.",
+      inputSchema: {},
+    },
+    async () => json(R.listBuildingBlocks(projectRoot))
+  );
+
+  server.registerTool(
+    "list_inference_models",
+    {
+      description: "On-device model assets: .onnx/.nn/.sentis/.pt/.tflite/.pb + .bytes with model markers.",
+      inputSchema: {},
+    },
+    async () => json(R.listInferenceModels(projectRoot))
+  );
+
+  server.registerTool(
+    "get_llm_runtime_inventory",
+    {
+      description: "In-game LLM patterns: HTTP calls, SSE/streaming, WebSockets, API-key handling, chat memory, retry. No secrets read.",
+      inputSchema: {},
+    },
+    async () => json(R.getLlmRuntimeInventory(projectRoot))
+  );
+
+  // --- Deep shipping audits ---
+  server.registerTool(
+    "get_addressables_duplicates",
+    {
+      description: "Addressables duplicate check: asset GUIDs in multiple groups + optional profile path notes.",
+      inputSchema: {
+        include_profiles: z.boolean().optional().describe("Also report custom build/load profile paths").default(false),
+      },
+    },
+    async (args: unknown) => json(R.getAddressablesDuplicates(projectRoot, (args as { include_profiles?: boolean })?.include_profiles ?? false))
+  );
+
+  server.registerTool(
+    "get_shader_variant_risk",
+    {
+      description: "Shader variant risk: multi_compile/shader_feature counts, top shaders by material usage, keyword stats.",
+      inputSchema: {},
+    },
+    async () => json(R.getShaderVariantRisk(projectRoot))
+  );
+
+  server.registerTool(
+    "get_input_conflicts",
+    {
+      description: "New Input System conflict scan: duplicate bindings inside the same action map.",
+      inputSchema: {},
+    },
+    async () => json(R.getInputConflicts(projectRoot))
+  );
+
+  server.registerTool(
+    "get_xr_origin_validation",
+    {
+      description: "XR scene validation: rig/origin/interaction-manager/teleport markers per scene.",
+      inputSchema: {},
+    },
+    async () => json(R.getXrOriginValidation(projectRoot))
+  );
+
+  server.registerTool(
+    "scan_netcode_rpc",
+    {
+      description: "Netcode RPC scan: ServerRpc/ClientRpc/NetworkVariable markers, unreliable delivery, ownership hints.",
+      inputSchema: {
+        max_files: z.number().optional().describe("Max scripts to scan, default 400").default(400),
+      },
+    },
+    async (args: unknown) => json(R.scanNetcodeRpc(projectRoot, (args as { max_files?: number })?.max_files ?? 400))
+  );
+
+  server.registerTool(
+    "get_navmesh_bake_state",
+    {
+      description: "NavMesh bake state: scenes with NavMesh markers, settings presence, agent script hits.",
+      inputSchema: {},
+    },
+    async () => json(R.getNavMeshBakeState(projectRoot))
+  );
+
+  server.registerTool(
+    "get_lod_occlusion_coverage",
+    {
+      description: "LOD/Occlusion coverage: scenes with LODGroup/occlusion markers for perf triage.",
+      inputSchema: {},
+    },
+    async () => json(R.getLodOcclusionCoverage(projectRoot))
+  );
+
+  server.registerTool(
+    "get_texture_import_heaviness",
+    {
+      description: "Texture import audit: 2048+ caps, Read/Write enabled, missing mipmaps, Crunch usage.",
+      inputSchema: {
+        top_n: z.number().optional().describe("Heaviest textures to return, default 20").default(20),
+      },
+    },
+    async (args: unknown) => json(R.getTextureImportHeaviness(projectRoot, (args as { top_n?: number })?.top_n ?? 20))
+  );
+
+  server.registerTool(
+    "get_audio_loudness_risk",
+    {
+      description: "Audio mix risk: PCM vs Vorbis balance, streaming vs compressed-in-memory, music-length candidates.",
+      inputSchema: {},
+    },
+    async () => json(R.getAudioLoudnessRisk(projectRoot))
+  );
+
+  server.registerTool(
+    "get_timeline_balance",
+    {
+      description: "Timeline health: playable assets vs bound PlayableDirectors, Signal/Marker coverage.",
+      inputSchema: {},
+    },
+    async () => json(R.getTimelineBalance(projectRoot))
+  );
+
+  server.registerTool(
+    "get_unused_assets_estimate",
+    {
+      description: "Unused-asset estimate: assets not referenced by build scenes (confirm via find_references; never auto-delete).",
+      inputSchema: {
+        top_n: z.number().optional().describe("Unused samples to return, default 30").default(30),
+      },
+    },
+    async (args: unknown) => json(R.getUnusedAssetsEstimate(projectRoot, (args as { top_n?: number })?.top_n ?? 30))
+  );
+
+  // --- Optional live bridge (opt-in localhost) ---
+  server.registerTool(
+    "get_bridge_status",
+    {
+      description: "Live Editor bridge status: enabled only when UNITY_MCP_BRIDGE_URL/PORT points at 127.0.0.1. Default disabled.",
+      inputSchema: {},
+    },
+    async () => json(R.getBridgeStatus())
+  );
+
+  server.registerTool(
+    "bridge_live_fetch",
+    {
+      description: "Fetch live Editor state via the opt-in localhost bridge (e.g. /hierarchy, /console, /screenshot). Refused when bridge disabled.",
+      inputSchema: { path: z.string().describe("Bridge path, e.g. /hierarchy or /console?limit=50") },
+    },
+    async (args: unknown) => json(await R.bridgeFetch((args as { path: string }).path))
   );
 
   const transport = new StdioServerTransport();

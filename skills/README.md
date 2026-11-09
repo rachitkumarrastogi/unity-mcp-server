@@ -30,6 +30,8 @@ skills/
 | Id | Focus |
 |----|--------|
 | `unity-release-readiness` | Ship gate |
+| `unity-next-level-shipping` | Execution insights + deep audits one-pass |
+| `unity-execution-insights` | Test XML + Editor.log + build reports |
 | `unity-build-profiles` | Unity 6 Build Profiles |
 | `unity-physics-audit` | Classic + Unity Physics + Physics Core 2D |
 | `unity-accessibility` | Screen readers / Accessibility APIs |
@@ -74,6 +76,7 @@ skills/
 | Id | Focus |
 |----|--------|
 | `unity-ai-audit` | Full AI/ML inventory |
+| `unity-ai-native` | Muse/Assistant/Inference/Building Blocks/LLM |
 | `unity-model-agnostic-inference` | Swap models without vendor lock-in |
 | `unity-ml-agents` | ML-Agents RL |
 | `unity-sentis-inference` | Unity Sentis |

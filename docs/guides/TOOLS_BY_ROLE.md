@@ -1,6 +1,6 @@
 # Tools by Role: Developer, Tester, Game Developer, Game Designer, AI / ML Engineer
 
-This document maps the **110 tools** in unity-mcp-server to five roles so you can see what’s available for your job.
+This document maps the **156 tools** in unity-mcp-server to five roles so you can see what’s available for your job.
 
 ---
 
@@ -16,6 +16,8 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 | **Assets & references** | `find_references`, `search_project`, `get_meta_for_asset`, `get_broken_asset_refs` |
 | **CI & version control** | `list_ci_configs`, `list_presets`, `get_git_lfs_tracked`, `get_plastic_config` |
 | **Testing & docs** | `list_test_assemblies`, `get_repo_docs`, `read_agent_docs` |
+| **Execution insights** | `list_test_result_files`, `get_test_results_summary`, `get_editor_log_errors`, `list_build_reports`, `get_build_report_summary` |
+| **Shipping audits** | `get_unused_assets_estimate`, `get_shader_variant_risk`, `get_texture_import_heaviness` |
 
 **Example prompts:** *"Which assembly contains PlayerController.cs?"* · *"Find references to GameManager"* · *"Do we have assembly cycles?"* · *"What's the script execution order?"* · *"List all C# scripts in Assets/Scripts"* · *"Is the project release ready?"*
 
@@ -31,6 +33,7 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 | **Testing & docs** | `list_test_assemblies`, `get_repo_docs`, `read_agent_docs` |
 | **Scenes & prefabs** | `list_all_scenes`, `get_scene_summary`, `get_scene_components_by_type`, `get_scene_objects_by_tag`, `list_prefabs`, `list_prefabs_with_component` |
 | **Speed & productivity** | `get_project_stats`, `get_broken_script_refs`, `get_release_readiness` |
+| **Execution insights** | `get_test_results_summary`, `get_editor_log_errors`, `get_build_report_summary` |
 | **CI & version control** | `list_ci_configs` |
 | **Input** | `get_input_axes`, `list_input_action_assets`, `get_input_actions_summary` |
 | **Tags & layers** | `get_tags_and_layers` |
@@ -54,6 +57,7 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 | **Tags & layers** | `get_tags_and_layers`, `get_layer_collision_matrix` |
 | **Integrations** | `get_playfab_config`, `get_firebase_config`, `get_steam_config`, `get_discord_config`, `get_analytics_or_crash_config`, `get_ads_config` |
 | **Speed & productivity** | `get_broken_script_refs`, `find_script_references` |
+| **Shipping audits** | `scan_netcode_rpc`, `get_navmesh_bake_state`, `get_input_conflicts`, `get_xr_origin_validation`, `get_shader_variant_risk`, `get_lod_occlusion_coverage` |
 
 **Example prompts:** *"Which prefabs have an Animator?"* · *"What states are in Player.controller?"* · *"Find objects with tag Spawn in Level01"* · *"What does Hero.prefab depend on?"* · *"List Input System action assets"* · *"Where are all the cameras?"*
 
@@ -75,6 +79,7 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 | **Audio** | `list_audio_clips`, `list_audio_mixers` |
 | **Tags & layers** | `get_tags_and_layers` |
 | **Addressables & localization** | `get_addressables_info`, `get_localization_tables` |
+| **Shipping audits** | `get_addressables_duplicates`, `get_texture_import_heaviness`, `get_audio_loudness_risk`, `get_timeline_balance`, `get_unused_assets_estimate` |
 | **Integrations** | `list_figma_related_assets` |
 
 **Example prompts:** *"List all materials"* · *"What's the import settings for hero.png?"* · *"Which prefabs have an Animator?"* · *"List sprite atlases"* · *"List localization tables"* · *"What references this texture?"*
@@ -87,15 +92,15 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 
 | Category | Tools |
 |----------|--------|
-| **AI & ML** | `get_ai_stack_summary`, `get_ai_ml_package_inventory`, `list_ml_model_assets`, `find_ai_related_scripts`, `list_ml_agents_training_configs`, `list_ai_prompt_or_config_assets`, `list_ai_skills`, `read_ai_skill` |
+| **AI & ML** | `get_ai_stack_summary`, `get_ai_ml_package_inventory`, `list_ml_model_assets`, `find_ai_related_scripts`, `list_ml_agents_training_configs`, `list_ai_prompt_or_config_assets`, `get_unity_ai_stack`, `list_building_blocks`, `list_inference_models`, `get_llm_runtime_inventory`, `list_ai_skills`, `read_ai_skill` |
 | **Navigation** | `get_navigation_settings`, `list_prefabs_with_component` (NavMeshAgent), `get_scene_components_by_type` |
 | **Code** | `find_scripts_by_content`, `find_script_references`, `get_script_public_api` |
 | **Build impact** | `get_build_size_estimate`, `find_references`, `get_prefab_dependencies`, `list_large_assets` |
 | **Release** | `get_release_readiness` |
 
-**Example prompts:** *"Audit the AI stack"* · *"List ONNX models and ML-Agents configs"* · *"Which scripts call OpenAI?"* · *"Read unity-sentis-inference skill"* · *"Prefabs with NavMeshAgent"*
+**Example prompts:** *"Audit the AI stack"* · *"List ONNX models and ML-Agents configs"* · *"Which scripts call OpenAI?"* · *"Read unity-sentis-inference skill"* · *"Prefabs with NavMeshAgent"* · *"Audit Unity AI platform"* · *"List Building Blocks"* · *"Audit in-game LLM usage"*
 
-**Bundled skills** (via `list_ai_skills` / `read_ai_skill`): Unity Editor domains under `skills/` — including `unity-scenes-workflow`, `unity-multiplayer-netcode`, `unity-build-profiles`, `unity-ugs-cloud`, `unity-physics-audit`.
+**Bundled skills** (via `list_ai_skills` / `read_ai_skill`): Unity Editor domains under `skills/` — including `unity-scenes-workflow`, `unity-multiplayer-netcode`, `unity-build-profiles`, `unity-ugs-cloud`, `unity-physics-audit`, `unity-next-level-shipping`, `unity-ai-native`, `unity-execution-insights`.
 
 ---
 
@@ -109,10 +114,10 @@ This document maps the **110 tools** in unity-mcp-server to five roles so you ca
 
 ## Summary
 
-- **AI / ML engineer:** ~15 tools (AI stack audit, models, ML-Agents, NavMesh, skills).
-- **Developer:** ~35 tools (assemblies, scripts, refs, cycles, release readiness, CI, docs).
-- **Tester:** ~25 tools (build, test assemblies, scenes, prefabs, release readiness, input, tags).
-- **Game developer:** ~40 tools (scenes, prefabs, animation, input, physics, navigation, integrations).
-- **Game designer:** ~35 tools (scenes, assets, materials, 2D, UI, animation, audio, localization).
+- **AI / ML engineer:** ~19 tools (AI stack audit, models, ML-Agents, NavMesh, Unity AI native, LLM runtime, skills).
+- **Developer:** ~40 tools (assemblies, scripts, refs, cycles, release readiness, CI, docs, execution insights).
+- **Tester:** ~28 tools (build, test assemblies, test results, Editor.log, scenes, prefabs, release readiness, input, tags).
+- **Game developer:** ~46 tools (scenes, prefabs, animation, input, physics, navigation, Netcode/XR audits, integrations).
+- **Game designer:** ~40 tools (scenes, assets, materials, 2D, UI, animation, audio, localization, shipping audits).
 
 Many tools are shared across roles. Use the [README](../../README.md) “Example prompt to type” column and [skills/README.md](../../skills/README.md) for domain workflows (scenes, prefabs, assets, …).

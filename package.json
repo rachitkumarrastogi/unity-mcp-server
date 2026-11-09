@@ -1,7 +1,7 @@
 {
   "name": "unity-mcp-server",
-  "version": "1.7.0",
-  "description": "Lightweight MCP server for Unity - project info, Unity 6 coverage, AI/ML discovery, 39 agent skills, 130+ tools (no Unity Editor required)",
+  "version": "1.8.0",
+  "description": "Lightweight MCP server for Unity - project info, Unity 6 coverage, AI/ML discovery, 39 agent skills, 150+ tools (no Unity Editor required)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -9,6 +9,8 @@
   },
   "scripts": {
     "build": "node node_modules/typescript/bin/tsc",
+    "pretest": "npm run build",
+    "test": "node --test \"tests/*.test.mjs\"",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "audit:check": "npm audit --audit-level=high"
