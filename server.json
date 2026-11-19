@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.rachitkumarrastogi/unity-mcp-server",
   "title": "Unity MCP Server",
-  "description": "Unity MCP Server (Unity3D, Unity 6) for Cursor, Claude, VS Code: 156 tools, 47 skills — scenes, prefabs, Addressables, Netcode, AI/ML, build reports, Editor.log. No Editor.",
+  "description": "Unity MCP Server: 156 tools, 47 skills — scenes, prefabs, Addressables, Netcode, AI/ML. No Editor",
   "repository": {
     "url": "https://github.com/rachitkumarrastogi/unity-mcp-server",
     "source": "github"
