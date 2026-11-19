@@ -1,6 +1,6 @@
 {
   "name": "unity-mcp-server",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Unity MCP Server (Unity3D, Unity 6): 156 tools, 47 skills — scenes, prefabs, Addressables, Netcode, AI/ML, build reports, shipping audits. No Unity Editor required.",
   "keywords": [
     "unity",

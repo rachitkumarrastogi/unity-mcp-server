@@ -26,7 +26,7 @@ async function main() {
 
   const server = new McpServer({
     name: "unity-mcp-server",
-    version: "1.8.0",
+    version: "1.9.0",
   });
 
   const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
