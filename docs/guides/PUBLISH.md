@@ -27,7 +27,7 @@ If the package name is already taken, use a scoped name in `package.json` (e.g. 
 
 ### 3. Publish to MCP Registry
 
-Install the MCP Publisher if needed ([REGISTRY.md](../reference/REGISTRY.md)):
+Install the MCP Publisher if needed (see the [MCP Registry](https://registry.modelcontextprotocol.io) publishing docs):
 
 ```bash
 # macOS/Linux example

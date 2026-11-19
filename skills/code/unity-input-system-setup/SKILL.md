@@ -9,10 +9,11 @@ description: >-
 ## Discovery
 
 1. `get_input_axes` — legacy axes in InputManager
-2. `list_input_action_assets` — `.inputed` assets
+2. `list_input_action_assets` — `.inputactions` assets
 3. `get_input_actions_summary` — maps/actions for one asset
-4. `list_packages` — `com.unity.inputsystem` present?
-5. `find_scripts_by_content` — `PlayerInput`, `InputAction`
+4. `get_input_conflicts` — duplicate bindings in the same map
+5. `list_packages` — `com.unity.inputsystem` present?
+6. `find_scripts_by_content` — `PlayerInput`, `InputAction`
 
 ## Checklist
 

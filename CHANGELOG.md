@@ -5,6 +5,19 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Skills (5, 47 total):** `unity-live-bridge-setup` (opt-in localhost bridge), `unity-visual-scripting` (Bolt / Visual Scripting assets), `unity-project-settings-audit` (ProjectSettings one-pass), `unity-refactor-impact` (rename/move/delete impact), `unity-project-onboarding` (first-look stats, layout, docs).
+- **npm discoverability:** `keywords` (unity, unity3d, unity-6, mcp, netcode, addressables, …), MIT `LICENSE`, `author`/`homepage`/`bugs`/`files`, keyword-rich description; README headline + `npx` install + Cursor/Claude/VS Code config; keyword-rich `server.json` description.
+
+### Fixed
+
+- Stale counts: 39 → 47 skills, 150+ → 156 tools (README, tools catalog, skills README).
+- Typo `.inputed` → `.inputactions`; `unity-input-system-setup` now covers `get_input_conflicts`; `unity-addressables-shipping` now covers `get_addressables_duplicates`.
+- `docs/guides/PUBLISH.md`: dead `REGISTRY.md` link → registry publishing docs.
+
 ## [1.8.0] - 2026-11-09
 
 ### Added

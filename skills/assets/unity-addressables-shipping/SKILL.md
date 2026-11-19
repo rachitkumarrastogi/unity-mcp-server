@@ -9,9 +9,10 @@ description: >-
 ## Discovery
 
 1. `get_addressables_info` — groups + settings asset path
-2. `get_localization_tables` — table assets/CSV/JSON
-3. `get_build_size_estimate` / `list_large_assets` — what must stay local
-4. `list_packages` — confirm `com.unity.addressables` / localization packages
+2. `get_addressables_duplicates` — same GUID in 2+ groups (double download)
+3. `get_localization_tables` — table assets/CSV/JSON
+4. `get_build_size_estimate` / `list_large_assets` — what must stay local
+5. `list_packages` — confirm `com.unity.addressables` / localization packages
 
 ## Checklist
 

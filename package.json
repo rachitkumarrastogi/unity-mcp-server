@@ -1,7 +1,37 @@
 {
   "name": "unity-mcp-server",
   "version": "1.8.0",
-  "description": "Lightweight MCP server for Unity - project info, Unity 6 coverage, AI/ML discovery, 39 agent skills, 150+ tools (no Unity Editor required)",
+  "description": "Unity MCP Server (Unity3D, Unity 6): 156 tools, 47 skills — scenes, prefabs, Addressables, Netcode, AI/ML, build reports, shipping audits. No Unity Editor required.",
+  "keywords": [
+    "unity",
+    "unity3d",
+    "unity-6",
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "gamedev",
+    "game-dev",
+    "claude",
+    "cursor",
+    "ai-agents",
+    "netcode",
+    "addressables",
+    "ml-agents",
+    "sentis",
+    "unity-editor"
+  ],
+  "license": "MIT",
+  "author": "rachitkumarrastogi",
+  "homepage": "https://github.com/rachitkumarrastogi/unity-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/rachitkumarrastogi/unity-mcp-server/issues"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
   "type": "module",
   "main": "dist/index.js",
   "bin": {

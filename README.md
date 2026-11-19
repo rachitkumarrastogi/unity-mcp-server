@@ -1,6 +1,6 @@
 # Unity MCP Server
 
-**MCP server for Unity** — Gives AI assistants structured access to your Unity project from any MCP-capable IDE or app. No Unity Editor required.
+**Unity3D MCP Server for Cursor, Claude Desktop, Claude Code, VS Code, Windsurf, and any MCP client** — Gives AI assistants structured access to your Unity project (Unity 6 ready) from any MCP-capable IDE or app. No Unity Editor required.
 
 [![npm version](https://img.shields.io/npm/v/unity-mcp-server.svg)](https://www.npmjs.com/package/unity-mcp-server) [![MCP Registry](https://img.shields.io/badge/MCP_Registry-View_this_server-6e7681?style=flat-square&labelColor=24292f)](https://registry.modelcontextprotocol.io/?q=unity-mcp-server)
 
@@ -338,7 +338,7 @@ Expand a category below to see the tools it includes.
 | `list_building_blocks` | Unity 6.3 LTS Building Blocks packages + sample assets | *"List Building Blocks in this project"* |
 | `list_inference_models` | On-device models: `.onnx`/`.nn`/`.sentis`/`.bytes` with model markers | *"List on-device inference models"* |
 | `get_llm_runtime_inventory` | In-game LLM patterns: HTTP/SSE/WebSocket/key handling (no secrets read) | *"Audit in-game LLM usage"* |
-| `list_ai_skills` | Bundled skills by Unity domain (39: scenes, multiplayer, build profiles, …) | *"List Unity skills"* |
+| `list_ai_skills` | Bundled skills by Unity domain (47: scenes, multiplayer, build profiles, …) | *"List Unity skills"* |
 | `read_ai_skill` | Read skill by id (e.g. `unity-scenes-workflow`, `unity-multiplayer-netcode`) | *"Read the unity-ai-audit skill"* |
 
 </details>
@@ -442,6 +442,12 @@ In Claude, Cursor, or any MCP client, ask in **natural language**; the AI picks 
 ## Installation
 
 ```bash
+npx -y unity-mcp-server
+```
+
+Or clone and build from source:
+
+```bash
 git clone https://github.com/rachitkumarrastogi/unity-mcp-server.git
 cd unity-mcp-server
 npm install
@@ -452,16 +458,16 @@ The server uses **stdio**; your MCP client starts it automatically.
 
 ---
 
-## Configuration
+## Configuration (Cursor, Claude Desktop, VS Code, Windsurf)
 
-Example for **Cursor** (same idea for Claude Desktop, VS Code + MCP, Windsurf, etc.):
+Point the client at the published package — no clone needed:
 
 ```json
 {
   "mcpServers": {
     "unity": {
-      "command": "node",
-      "args": ["/absolute/path/to/unity-mcp-server/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "unity-mcp-server"],
       "env": {
         "UNITY_PROJECT_PATH": "/absolute/path/to/YourUnityProject"
       }
@@ -469,6 +475,8 @@ Example for **Cursor** (same idea for Claude Desktop, VS Code + MCP, Windsurf, e
   }
 }
 ```
+
+Or, when running from source, use `command: node` with `args: ["/absolute/path/to/unity-mcp-server/dist/index.js"]` and the same `env`.
 
 Replace the paths with your actual paths. For **Claude Desktop**, add an entry under `mcpServers` in `claude_desktop_config.json` with the same `command`, `args`, and `env`. For **VS Code**, use your MCP extension’s config to add the server and `UNITY_PROJECT_PATH`. Other clients follow the same pattern in their own config files.
 

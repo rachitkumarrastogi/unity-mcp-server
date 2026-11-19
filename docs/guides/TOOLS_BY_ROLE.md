@@ -100,7 +100,7 @@ This document maps the **156 tools** in unity-mcp-server to five roles so you ca
 
 **Example prompts:** *"Audit the AI stack"* · *"List ONNX models and ML-Agents configs"* · *"Which scripts call OpenAI?"* · *"Read unity-sentis-inference skill"* · *"Prefabs with NavMeshAgent"* · *"Audit Unity AI platform"* · *"List Building Blocks"* · *"Audit in-game LLM usage"*
 
-**Bundled skills** (via `list_ai_skills` / `read_ai_skill`): Unity Editor domains under `skills/` — including `unity-scenes-workflow`, `unity-multiplayer-netcode`, `unity-build-profiles`, `unity-ugs-cloud`, `unity-physics-audit`, `unity-next-level-shipping`, `unity-ai-native`, `unity-execution-insights`.
+**Bundled skills** (via `list_ai_skills` / `read_ai_skill`): 47 skills in Unity Editor domains under `skills/` — including `unity-scenes-workflow`, `unity-multiplayer-netcode`, `unity-build-profiles`, `unity-ugs-cloud`, `unity-physics-audit`, `unity-next-level-shipping`, `unity-ai-native`, `unity-execution-insights`, `unity-live-bridge-setup`, `unity-project-settings-audit`, `unity-project-onboarding`, `unity-refactor-impact`, `unity-visual-scripting`.
 
 ---
 

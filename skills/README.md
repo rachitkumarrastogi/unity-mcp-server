@@ -7,11 +7,11 @@ Discover with `list_ai_skills` / `read_ai_skill` (skill **id** = leaf folder nam
 
 ```text
 skills/
-  project/       Project Settings, packages, ship gate, physics, a11y, build profiles
+  project/       Project Settings, packages, ship gate, physics, a11y, build profiles, settings audit, onboarding, live bridge
   scenes/        Build scenes, hierarchy, lighting, QA
   prefabs/       Prefab structure & variants
   assets/        References, Addressables, localization, missing GUIDs
-  code/          Assemblies, Input System, CI
+  code/          Assemblies, Input System, CI, Visual Scripting, refactor impact
   rendering/     URP / HDRP / BIRP migration
   animation/     Animator / Timeline / Cinemachine
   2d/            Sprites / tilemaps
@@ -35,6 +35,9 @@ skills/
 | `unity-build-profiles` | Unity 6 Build Profiles |
 | `unity-physics-audit` | Classic + Unity Physics + Physics Core 2D |
 | `unity-accessibility` | Screen readers / Accessibility APIs |
+| `unity-project-settings-audit` | ProjectSettings one-pass |
+| `unity-project-onboarding` | First-look stats, layout, docs |
+| `unity-live-bridge-setup` | Opt-in localhost Editor bridge |
 
 ### scenes
 | Id | Focus |
@@ -58,8 +61,10 @@ skills/
 | Id | Focus |
 |----|--------|
 | `unity-assembly-architecture` | asmdefs / cycles |
-| `unity-input-system-setup` | Input System |
+| `unity-input-system-setup` | Input System (+ conflicts) |
 | `unity-ci-github-actions` | CI / LFS / Plastic |
+| `unity-visual-scripting` | Bolt / Visual Scripting assets |
+| `unity-refactor-impact` | Rename/move/delete impact |
 
 ### rendering · animation · 2d · ui · audio
 | Id | Focus |
